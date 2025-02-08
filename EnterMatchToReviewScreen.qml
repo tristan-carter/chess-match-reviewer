@@ -7,8 +7,75 @@ Window {
     visible: true
     width: 1000
     height: 660
-    title: "Chess Review"
+    title: "Chess Reviewer"
     color: "#463F3A"
+
+    Popup {
+        id: chooseUserSide
+        modal: true
+        focus: true
+        anchors.centerIn: parent
+        width: 210
+        height: 140
+        background: Rectangle {
+            color: "#E0AFA0"
+            radius: 8
+        }
+        Column {
+            width: 195
+            anchors.centerIn: parent
+            spacing: 11
+            Text {
+                Layout.alignment: Qt.AlignHCenter
+                text: "Select the side you played during the match you would like to review"
+                wrapMode: Text.WordWrap
+                width: 190
+                font.pixelSize: 16
+                horizontalAlignment: Text.AlignHCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "#1A1A1A"
+            }
+            Row {
+                spacing: 20
+                anchors.horizontalCenter: parent.horizontalCenter
+                Button {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "White"
+                    width: 85
+                    height: 47
+                    font.bold: true
+                    font.pixelSize: 25
+                    background: Rectangle {
+                        color: "#F4F3EE"
+                        radius: 8
+                    }
+                    onClicked: {
+                        match_review.enter_user_side(0)
+                        chooseUserSide.close()
+                    }
+                }
+                Button {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "Black"
+                    width: 85
+                    height: 47
+                    font.bold: true
+                    font.pixelSize: 25
+                    background: Rectangle {
+                        color: "#F4F3EE"
+                        radius: 8
+                    }
+                    onClicked: {
+                        match_review.enter_user_side(1)
+                        chooseUserSide.close()
+                    }
+                }
+            }
+        }
+    }
+    // opens pop up for user to select side played during match once GUI
+    // screen for revieweing has loaded
+    Component.onCompleted: chooseUserSide.open()
 
     RowLayout {
         anchors.centerIn: parent
@@ -38,9 +105,10 @@ Window {
                 Button {
                     Layout.alignment: Qt.AlignHCenter
                     text: "Start Review"
+                    font.bold: true
                     Layout.preferredWidth: 170
                     Layout.preferredHeight: 55
-                    font.pixelSize: 27
+                    font.pixelSize: 25
                     background: Rectangle {
                         color: "#F4F3EE"
                         radius: 10

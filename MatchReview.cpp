@@ -19,16 +19,16 @@ MatchReview::~MatchReview()
 {
 }
 
+void MatchReview::enter_user_side(PlayerSide entered_user_side) {
+    user_side = entered_user_side;
+}
+
 QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, short int x_from, short int y_from)
 {
     //
     QVariantList boardGUI_variant_list;
-    std::cout << x_from << ", " << y_from << std::endl;
-    std::cout << x_to << ", " << y_to << std::endl;
     Move move_entered{ Coord{x_from, y_from}, Coord{x_to, y_to} };
     bool is_entered_move_valid = match_board.push_move(move_entered);
-    std::cout << is_entered_move_valid << std::endl;
-    match_board.print_board();
 
     for (short int y = BOARD_SIZE - 1; y > -1; y--) {
         QVariantList row{};
@@ -77,11 +77,19 @@ QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, 
 // in progress
 void MatchReview::find_blunders(PlayerSide recieved_user_side)
 {
+    // undoes all moves made on board during entering of match
+    for (short int i = 0; i < match_moves.size(); i++) {
+        match_board.pop_move();
+    }
     user_side = recieved_user_side;
     match_blunders = {};
     for (Move& move : match_moves)
     {
-        //needs finishing
+        // returns 3 pieces of information:
+        // 1. the board just before the blunder is made as a QVariantList
+        // 2. the coordinate of the square the piece moves to in the blunder
+        // 3. the coordinate of the square the piece should have moved to for the best move
+
     }
 }
 

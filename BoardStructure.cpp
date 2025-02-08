@@ -100,7 +100,6 @@ BoardStructure::BoardStructure()
 
     // Step 3 - finds legal moves available in the starting board position
     this->find_moves();
-    std::cout << "Finished Constructing" << std::endl;
 }
 
 BoardStructure::~BoardStructure()
