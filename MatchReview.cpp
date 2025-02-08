@@ -14,16 +14,11 @@ MatchReview::MatchReview()
     match_moves = {};
 }
 
-// in progress
-MatchReview::~MatchReview()
-{
-}
-
 void MatchReview::enter_user_side(PlayerSide entered_user_side) {
     user_side = entered_user_side;
 }
 
-QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, short int x_from, short int y_from)
+QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, short int x_from, short int y_from, PieceType promoting_to)
 {
     //
     QVariantList boardGUI_variant_list;

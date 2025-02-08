@@ -136,6 +136,7 @@ Window {
             property var selectedPiece: null
             property int selectedRow: -1
             property int selectedCol: -1
+            property int piece_promoting_to: 0
             Repeater {
                 model: 64
                 Button {
@@ -159,7 +160,7 @@ Window {
                             }
                         } else {
                             let newBoardFlat = match_review.enter_move_from_match(col,
-                              7-row, guiChessBoard.selectedCol, 7-guiChessBoard.selectedRow);
+                              7-row, guiChessBoard.selectedCol, 7 - guiChessBoard.selectedRow, guiChessBoard.promotion_to);
                             let newBoard = [];
                             for (let y = 0; y < 8; y++) {
                                 newBoard.push(newBoardFlat.slice(y * 8, (y + 1) * 8));
