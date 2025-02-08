@@ -23,7 +23,15 @@ QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, 
     //
     QVariantList boardGUI_variant_list;
     Move move_entered{ Coord{x_from, y_from}, Coord{x_to, y_to} };
+    if (promoting_to != NOPIECE) {
+        move_entered.promotion_to = promoting_to;
+    }
+
     bool is_entered_move_valid = match_board.push_move(move_entered);
+
+    if (is_entered_move_valid) {
+        match_moves.push_back(move_entered);
+    }
 
     for (short int y = BOARD_SIZE - 1; y > -1; y--) {
         QVariantList row{};

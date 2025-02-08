@@ -17,6 +17,8 @@ Window {
         spacing: 20
         Layout.alignment: Qt.AlignVCenter
 
+        // Pop up shown when chess reviewer application is opened, allows user to
+        // select which side they played during the match they want to review
         Popup {
             id: chooseUserSide
             modal: true
@@ -84,6 +86,96 @@ Window {
         // screen for revieweing has loaded
         Component.onCompleted: chooseUserSide.open()
 
+        // Pop up for selecting which type of piece to promote a pawn to once it reaches
+        // the end of the board
+        Popup {
+            id: choosePromotedPieceType
+            modal: true
+            focus: true
+            anchors.centerIn: parent
+            width: 320
+            height: 125
+            background: Rectangle {
+                color: "#E0AFA0"
+                radius: 8
+            }
+            Column {
+                anchors.centerIn: parent
+                spacing: 11
+                Text {
+                    text: "Select the piece to promote your pawn to"
+                    font.pixelSize: 16
+                    color: "#1A1A1A"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+                Row {
+                    spacing: 10
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    // promote to bishop
+                    Button {
+                        text: "♗"
+                        font.pixelSize: 38
+                        width: 50
+                        height: 50
+                        background: Rectangle {
+                            color: "#F4F3EE"
+                            radius: 10
+                        }
+                        onClicked: {
+                            callEnterMoveFromMatch(2)
+                            choosePromotedPieceType.close()
+                        }
+                    }
+                    // promote to knight
+                    Button {
+                        text: "♘"
+                        font.pixelSize: 38
+                        width: 50
+                        height: 50
+                        background: Rectangle {
+                            color: "#F4F3EE"
+                            radius: 10
+                        }
+                        onClicked: {
+                            callEnterMoveFromMatch(3)
+                            choosePromotedPieceType.close()
+                        }
+                    }
+                    // promote to rook
+                    Button {
+                        text: "♖"
+                        font.pixelSize: 38
+                        width: 50
+                        height: 50
+                        background: Rectangle {
+                            color: "#F4F3EE"
+                            radius: 10
+                        }
+                        onClicked: {
+                            callEnterMoveFromMatch(4)
+                            choosePromotedPieceType.close()
+                        }
+                    }
+                    // promote to queen
+                    Button {
+                        text: "♕"
+                        font.pixelSize: 38
+                        width: 50
+                        height: 50
+                        background: Rectangle {
+                            color: "#F4F3EE"
+                            radius: 10
+                        }
+                        onClicked: {
+                            guiChessBoard.callEnterMoveFromMatch(5)
+                            choosePromotedPieceType.close()
+                        }
+                    }
+                }
+            }
+        }
+
+
         // Start Review Section
         Rectangle {
             Layout.preferredWidth: 185
@@ -134,9 +226,29 @@ Window {
                 ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"],
             ]
             property var selectedPiece: null
-            property int selectedRow: -1
-            property int selectedCol: -1
-            property int piece_promoting_to: 0
+            property int x_from: -1
+            property int y_from: -1
+            property int x_to: -1
+            property int y_to: -1
+
+            function callEnterMoveFromMatch(pieceToPromotePawnTo) {
+                var updated1dGUIChessBoard = match_review.enter_move_from_match(guiChessBoard.y_to, 7-guiChessBoard.x_to,
+                    guiChessBoard.y_from, 7 - guiChessBoard.x_from, pieceToPromotePawnTo)
+
+                // converts recieved 1d board into a 2d board so it can be displayed by the GUI
+                var updatedGUIChessBoard = []
+                for (var y = 0; y < 8; y++) {
+                    updatedGUIChessBoard.push(updated1dGUIChessBoard.slice(y * 8, (y + 1) * 8))
+                }
+                guiChessBoard.guiChessBoardOutputGrid = updatedGUIChessBoard
+
+                // resets selected square
+                guiChessBoard.selectedPiece = null
+                guiChessBoard.x_from = -1
+                guiChessBoard.y_from = -1
+            }
+
+
             Repeater {
                 model: 64
                 Button {
@@ -150,25 +262,24 @@ Window {
                         border.width: 0.5
                     }
                     onClicked: {
-                        let row = Math.floor(index / 8)
-                        let col = index % 8
+                        guiChessBoard.x_to = Math.floor(index / 8)
+                        guiChessBoard.y_to = index % 8
                         if (guiChessBoard.selectedPiece === null) {
                             if (text !== "") {
                                 guiChessBoard.selectedPiece = text
-                                guiChessBoard.selectedRow = row
-                                guiChessBoard.selectedCol = col
+                                guiChessBoard.x_from = guiChessBoard.x_to
+                                guiChessBoard.y_from = guiChessBoard.y_to
                             }
                         } else {
-                            let newBoardFlat = match_review.enter_move_from_match(col,
-                              7-row, guiChessBoard.selectedCol, 7 - guiChessBoard.selectedRow, guiChessBoard.promotion_to);
-                            let newBoard = [];
-                            for (let y = 0; y < 8; y++) {
-                                newBoard.push(newBoardFlat.slice(y * 8, (y + 1) * 8));
+                            // checks if a either a white or black is in a position where it now
+                            // needs to be promoted
+                            var isPawnPromoting = (guiChessBoard.selectedPiece === "♙" && guiChessBoard.x_to === 0)
+                                    || (guiChessBoard.selectedPiece === "♟" && guiChessBoard.x_to === 7)
+                            if (isPawnPromoting) {
+                                choosePromotedPieceType.open()
+                            } else {
+                                guiChessBoard.callEnterMoveFromMatch(0)
                             }
-                            guiChessBoard.guiChessBoardOutputGrid = newBoard;
-                            guiChessBoard.selectedPiece = null
-                            guiChessBoard.selectedRow = -1
-                            guiChessBoard.selectedCol = -1
                         }
                     }
                 }
@@ -191,8 +302,7 @@ Window {
                     anchors.centerIn: parent
                     width: parent.width - 20
                     wrapMode: Text.WordWrap
-                    text: "Replay the match you would like to review on the chess board before
-                      pressing start review. Move pieces by clicking a piece then clicking the square to move it to."
+                    text: "Replay the match you would like to review on the chess board before pressing start review. Move pieces by clicking a piece then clicking the square to move it to."
                     font.pixelSize: 16
                     color: "#1A1A1A"
                 }
