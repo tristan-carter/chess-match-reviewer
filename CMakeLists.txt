@@ -18,6 +18,29 @@ qt_add_qml_module(appALevelNEAChessReviewer
     QML_FILES
     EnterMatchToReviewScreen.qml
     QML_FILES
+    SOURCES
+    SOURCES BoardStructure.h
+    SOURCES BoardStructure.cpp
+    SOURCES BoardCell.h
+    SOURCES Piece.h
+    SOURCES Piece.cpp
+    SOURCES Move.h
+    SOURCES PastMove.h
+    SOURCES Coord.h
+    SOURCES PieceSquareTables.cpp
+    SOURCES Pawn.h
+    SOURCES Bishop.h
+    SOURCES King.h
+    SOURCES Knight.h
+    SOURCES Queen.h
+    SOURCES Rook.h
+    SOURCES Bishop.cpp
+    SOURCES King.cpp
+    SOURCES Knight.cpp
+    SOURCES Pawn.cpp
+    SOURCES Queen.cpp
+    SOURCES Rook.cpp
+    SOURCES MatchReview.h MatchReview.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
