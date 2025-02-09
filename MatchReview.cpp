@@ -78,6 +78,7 @@ QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, 
 
     QVariantList boardGUI_variant_list = this->convert_board_to_QML_board();
 
+    match_board.print_board();
     return boardGUI_variant_list;
 }
 

@@ -102,6 +102,8 @@ BoardStructure::BoardStructure()
     this->find_moves();
 }
 
+
+// pseudo code and development section need this removed, say default constructor will do the job so there is no need for a custom deconstructor
 BoardStructure::~BoardStructure()
 {
     /*std::cout << "BoardStructure deconstructing" << std::endl;
@@ -194,7 +196,11 @@ bool BoardStructure::push_move(Move& player_move, bool check_for_pin)
     // can be stored in the past moves vector
     Piece* piece_from = board[player_move.from.x][player_move.from.y].piece;
     PastMove past_move{ player_move.from, player_move.to,
-                       piece_from->player_side, nullptr, piece_from->piece_type, player_move.is_castle };
+                       piece_from->player_side, nullptr, NOPIECE, player_move.is_castle };
+
+    if (player_move.promotion_to != NOPIECE) {
+        past_move.promoted_from = piece_from->piece_type;
+    }
 
     // Step 4 - removes the piece taken from the board (purpose of this step is for the
     // en passant move as the position of the piece taken and position the piece moves
@@ -254,7 +260,7 @@ bool BoardStructure::push_move(Move& player_move, bool check_for_pin)
     // Step 6 - adds the move to the past moves vector so it is possible for the move to be undone
     past_moves.push_back(past_move);
 
-    // Step 7 - handles moving both the rook if the move is a castle
+    // Step 7 - handles moving both the rook and the king if the move is a castle
     if (player_move.is_castle)
     {
         if (player_move.to.x == 6)
@@ -377,6 +383,9 @@ void BoardStructure::pop_move(bool pop_past_possible_moves)
     // Step 6 - decreases the move_number by one and deletes the most recent move
     // from past_moves
     --move_number;
+    if (past_moves.size() == 0) {
+        std::cout << "ERROR - ATTEMPT TO UNDO MOVE WHEN IT IS THE FIRST MOVE OF THE MATCH" << std::endl;
+    }
     past_moves.erase(past_moves.end() - 1);
 
     // Step 7 - if pop_past_possible_moves is true (would be false if the move being
@@ -431,7 +440,7 @@ void BoardStructure::add_possible_move(Coord move_to, Coord piece_position,
     // Step 1 - constructs a possible move using the variables passed to the method but
     // with the promotion_to attribute initially defined to NOPIECE as this will be
     // properly defined in Step 2
-    Move possible_move{piece_position, move_to, piece_taken_position, NOPIECE, is_castle};
+    Move possible_move{piece_position, move_to, piece_taken_position, NOPIECE, is_castle, false};
 
     // Step 2 - if this possible move is for finding out whether another piece is pinned
     // then the method pushes the possible move straight onto pin_moves, if it is not

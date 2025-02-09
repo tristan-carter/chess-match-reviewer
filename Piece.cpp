@@ -25,6 +25,7 @@ void Piece::find_straight_moves(BoardStructure& board, Coord piece_position,
         // the end of the board
         for (int move_by = 1; move_by < BOARD_SIZE; move_by++)
         {
+            bool is_direction_cutoff = false;
             // Step 3 - assigns the move_to coordinate to be investigated
             // a value for each iteration depending on the direction and
             // the value of move_by
@@ -53,7 +54,8 @@ void Piece::find_straight_moves(BoardStructure& board, Coord piece_position,
             // Step 4 - validates that the coordinate to move to is a valid coordinate on the board
             // and that if the piece moving is a king that the piece is only moving by one square
             if (this->is_coord_in_board(move_to)
-                && (!is_king || move_by == 1) /*(King's can only move one square)*/) {
+                && (is_king == false || move_by == 1) /*(King's can only move one square)*/
+                && is_direction_cutoff == false) {
 
                 // Step 5 - initiates a variable to keep track of the cell which the piece
                 // is moving to so that code is repeated less. Then checks that if there
@@ -61,8 +63,7 @@ void Piece::find_straight_moves(BoardStructure& board, Coord piece_position,
                 BoardCell& move_to_cell{ board.board[move_to.x][move_to.y] };
 
                 if (move_to_cell.piece == nullptr || (move_to_cell.piece != nullptr
-                                                      && move_to_cell.piece->player_side !=
-                                                             board.board[piece_position.x][piece_position.y].piece->player_side)) {
+                    && move_to_cell.piece->player_side != board.board[piece_position.x][piece_position.y].piece->player_side)) {
 
                     // Step 6 - checks if the board cell to move to has a piece on it, we already
                     // know this piece would have to be on the opposition's side due to the checks
@@ -76,6 +77,7 @@ void Piece::find_straight_moves(BoardStructure& board, Coord piece_position,
                     // this coordinate is not on the board and represents that no piece is to be taken
                     if (move_to_cell.piece != nullptr) {
                         board.add_possible_move(move_to, piece_position, move_to, check_for_pin);
+                        is_direction_cutoff = true;
                         break;
 
                     }
@@ -83,9 +85,9 @@ void Piece::find_straight_moves(BoardStructure& board, Coord piece_position,
                         board.add_possible_move(move_to, piece_position, Coord{ -1, 0 }, check_for_pin);
                     }
                 }
-                else { break; }
+                else { is_direction_cutoff = true; break; }
             }
-            else { break; }
+            else { is_direction_cutoff = true; break; }
         }
     }
 }

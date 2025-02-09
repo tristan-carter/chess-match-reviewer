@@ -1,13 +1,14 @@
 // King.cpp
 #include "King.h"
 
+// has been updated, new screenshots needed
 void King::add_possible_moves(BoardStructure& board,
                               short int player_move_multiplier, bool check_for_pin, BoardCell& board_cell)
 {
     Coord piece_position = this->coord;
     Coord possible_move_to{};
 
-    this->find_straight_moves(board,board_cell.coord, player_move_multiplier, true, check_for_pin);
+    this->find_straight_moves(board, board_cell.coord, player_move_multiplier, true, check_for_pin);
     this->find_diagonal_moves(board, board_cell.coord, player_move_multiplier, true, check_for_pin);
 
     ++board.move_number;
@@ -60,7 +61,7 @@ void King::add_possible_moves(BoardStructure& board,
                 else { can_castle = false; }
 
                 check_cell = &board.board[piece_position.x + 2][piece_position.y];
-                if (check_cell->piece == nullptr)
+                if (check_cell->piece == nullptr && can_castle)
                 {
                     possible_move_to.x = piece_position.x + 2;
                     Move possible_move{ piece_position, possible_move_to };
@@ -98,7 +99,7 @@ void King::add_possible_moves(BoardStructure& board,
                 else { can_castle = false; }
 
                 check_cell = &board.board[piece_position.x - 2][piece_position.y];
-                if (check_cell->piece == nullptr)
+                if (check_cell->piece == nullptr && can_castle)
                 {
                     possible_move_to.x = piece_position.x - 2;
                     Move possible_move{ piece_position, possible_move_to };
@@ -110,14 +111,14 @@ void King::add_possible_moves(BoardStructure& board,
                 else { can_castle = false; }
 
                 check_cell = &board.board[1][piece_position.y];
-                if (check_cell->piece != nullptr) { can_castle = false; }
+                if (check_cell->piece != nullptr && can_castle) { can_castle = false; }
 
                 if (can_castle)
                 {
                     possible_move_to.x = piece_position.x - 2;
                     possible_move_to.y = piece_position.y;
                     board.add_possible_move(possible_move_to,
-                                            piece_position, Coord{ -1, 0 }, check_for_pin, false, true);
+                        piece_position, Coord{ -1, 0 }, check_for_pin, false, true);
                 }
             }
 
