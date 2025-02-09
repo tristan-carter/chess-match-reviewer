@@ -204,7 +204,12 @@ Window {
                         color: "#F4F3EE"
                         radius: 10
                     }
-                    onClicked: console.log("Review Started!")
+                    onClicked: {
+                        var matchBlunders = match_review.find_blunders()
+                        var matchReviewScreen = Qt.createComponent("MatchReviewScreen.qml").createObject(parent)
+                        matchReviewScreen.matchBlunders = matchBlunders
+                        matchReviewScreen.show()
+                    }
                 }
             }
         }

@@ -6,7 +6,6 @@
 #include "MatchReview.h"
 #include "PieceSquareTables.cpp"
 
-// in progress
 MatchReview::MatchReview()
 {
     // Step 1 - initiates board and
@@ -18,26 +17,13 @@ void MatchReview::enter_user_side(PlayerSide entered_user_side) {
     user_side = entered_user_side;
 }
 
-QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, short int x_from, short int y_from, PieceType promoting_to)
-{
-    //
+QVariantList MatchReview::convert_board_to_QML_board() {
     QVariantList boardGUI_variant_list;
-    Move move_entered{ Coord{x_from, y_from}, Coord{x_to, y_to} };
-    if (promoting_to != NOPIECE) {
-        move_entered.promotion_to = promoting_to;
-    }
-
-    bool is_entered_move_valid = match_board.push_move(move_entered);
-
-    if (is_entered_move_valid) {
-        match_moves.push_back(move_entered);
-    }
-
     for (short int y = BOARD_SIZE - 1; y > -1; y--) {
         QVariantList row{};
         for (short int x = 0; x < BOARD_SIZE; x++) {
             const BoardCell& board_cell = match_board.board[x][y];
-           // const Piece* board_piece = board_cell.piece;
+            // const Piece* board_piece = board_cell.piece;
             if (board_cell.piece == nullptr) {
                 row.append("");
             }
@@ -73,27 +59,103 @@ QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, 
         }
         boardGUI_variant_list.append(row);
     }
+    return boardGUI_variant_list;
+}
+
+QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, short int x_from, short int y_from, PieceType promoting_to)
+{
+    //
+    Move move_entered{ Coord{x_from, y_from}, Coord{x_to, y_to} };
+    if (promoting_to != NOPIECE) {
+        move_entered.promotion_to = promoting_to;
+    }
+
+    bool is_entered_move_valid = match_board.push_move(move_entered);
+
+    if (is_entered_move_valid) {
+        match_moves.push_back(move_entered);
+    }
+
+    QVariantList boardGUI_variant_list = this->convert_board_to_QML_board();
 
     return boardGUI_variant_list;
 }
 
 // in progress
-void MatchReview::find_blunders(PlayerSide recieved_user_side)
+QVariantList MatchReview::find_blunders()
 {
     // undoes all moves made on board during entering of match
-    for (short int i = 0; i < match_moves.size(); i++) {
+    for (short int i = 0; i < match_moves.size()-1; i++) {
         match_board.pop_move();
     }
-    user_side = recieved_user_side;
-    match_blunders = {};
-    for (Move& move : match_moves)
+    QVariantList match_blunders = {};
+    for (int move_number = 0; move_number < match_moves.size(); move_number++)
     {
-        // returns 3 pieces of information:
-        // 1. the board just before the blunder is made as a QVariantList
-        // 2. the coordinate of the square the piece moves to in the blunder
-        // 3. the coordinate of the square the piece should have moved to for the best move
+        if (move_number % 2 == user_side) {
+            // evaluates all possible moves
+            Move best_move;
+            short int best_move_eval = -9999;
+            short int user_move_eval;
+            for (Move move: match_board.possible_moves) {
+                short int eval_score = this->negamax_alpha_beta(match_board,
+                                                                -9999, 9999, TREE_DEPTH);
 
+                // finds best alternative move
+                if (eval_score >= best_move_eval) {
+                    best_move_eval = eval_score;
+                    best_move = move;
+                }
+
+                // checks if this move was the move made by the user
+                if (move == match_moves[move_number]) {
+                    user_move_eval = eval_score;
+                }
+            }
+
+            // determines whether user's move was a blunder
+            if (best_move_eval - user_move_eval > 300) {
+                // needs to store 4 pieces of information:
+                // 1. the board just before the blunder is made as a QVariantList
+                // 2. the coordinate of the square the piece moves to in the blunder
+                // 3. the coordinate of the square the piece should have moved from and to for the best move
+                // 4. a score from 1-100 as to how severe the blunder was
+                short int blunder_from_x;
+                short int blunder_from_y;
+                short int blunder_to_x;
+                short int blunder_to_y;
+
+                short int best_from_x;
+                short int best_from_y;
+                short int best_to_x;
+                short int best_to_y;
+                QVariantMap blunder;
+                blunder["boardBeforeBlunder"] = this->convert_board_to_QML_board();
+
+                blunder["blunder_from_x"] = match_moves[move_number].from.x;
+                blunder["blunder_from_y"] = match_moves[move_number].from.y;
+                blunder["blunder_to_x"] = match_moves[move_number].to.x;
+                blunder["blunder_to_y"] = match_moves[move_number].to.y;
+
+                blunder["best_from_x"] = best_move.from.x;
+                blunder["best_from_y"] = best_move.from.y;
+                blunder["best_to_x"] = best_move.to.x;
+                blunder["best_to_y"] = best_move.to.y;
+
+                short int blunder_severity = (best_move_eval - user_move_eval) / 10;
+
+                // validates that the blunder severity is not over its maximum value of 100
+                if (blunder_severity > 100) {
+                    blunder_severity = 100;
+                }
+                blunder["severity"] = blunder_severity;
+
+
+                match_blunders.append(blunder);
+            }
+        }
+        match_board.push_move(match_moves[move_number]);
     }
+    return match_blunders;
 }
 
 short int MatchReview::negamax_alpha_beta(BoardStructure& board,
@@ -428,6 +490,7 @@ short int MatchReview::static_in_play_evaluation(BoardStructure& board)
                     else {
                         static_eval_score += black_king_square_table[x][y] * black_sign;
                     }
+                    break;
                 default:
                     std::cout << "ERROR - INVALID PIECE TYPE" << std::endl;
                     break;
