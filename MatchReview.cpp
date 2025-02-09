@@ -97,8 +97,11 @@ QVariantList MatchReview::find_blunders()
             short int best_move_eval = -9999;
             short int user_move_eval;
             for (Move move: match_board.possible_moves) {
-                short int eval_score = this->negamax_alpha_beta(match_board,
+                match_board.push_move(move);
+                short int eval_score = -this->negamax_alpha_beta(match_board,
                     -9999, 9999, TREE_DEPTH);
+
+                match_board.pop_move();
 
                 // finds best alternative move
                 if (eval_score >= best_move_eval) {
@@ -179,12 +182,16 @@ short int MatchReview::negamax_alpha_beta(BoardStructure& board,
 
     // Step 4 – iterates through each available legal move in the board position
     // the method was called on.
-    for (Move &move : board.possible_moves)
+    std::vector<Move> current_possible_moves = board.possible_moves;
+    for (Move &move : current_possible_moves)
     {
         // Step 5 - pushes the currently iterated move on the board so that the
         // resulting board position can be analysed to determine how good of a
         // move the move pushed was.
-        board.push_move(move);
+        bool is_legal = board.push_move(move);
+        if (is_legal == false) {
+            std::cout << "ERROR - INVALID MOVE" << std::endl;
+        }
 
         // Step 6 – declares score in the scope necessary to be accessed in the
         // later steps. Then checks whether the match has ended after making an
@@ -292,13 +299,17 @@ short int MatchReview::quiescence(BoardStructure& board,
     // Step 7 – iterates through each available legal move in the board position
     // the method was called on and checks for each iteration that the move
     // involves a piece capture (so only unstable positions are being branched down).
-    for (Move &move : board.possible_moves)
+    std::vector<Move> current_possible_moves = board.possible_moves;
+    for (Move &move : current_possible_moves)
     {
         if (move.piece_taken.x != -1)
         {
             // Step 8 -pushes the currently iterated move on the board so that the
             // resulting board position can be analysed.
-            board.push_move(move);
+            bool is_legal = board.push_move(move);
+            if (is_legal == false) {
+                std::cout << "ERROR - INVALID MOVE" << std::endl;
+            }
 
             // Step 9 – declares score in the scope necessary to be accessed in the
             // later steps. Then checks whether the match has ended after making an

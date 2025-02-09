@@ -216,32 +216,39 @@ bool BoardStructure::push_move(Move& player_move, bool check_for_pin)
     case PAWN:
         board[player_move.to.x][player_move.to.y].piece = new Pawn{ player_move.promotion_to,
                                                                    piece_from->player_side, player_move.to };
+        delete piece_from;
         break;
     case BISHOP:
         board[player_move.to.x][player_move.to.y].piece = new Bishop{ player_move.promotion_to,
                                                                      piece_from->player_side, player_move.to };
+        delete piece_from;
         break;
     case ROOK:
         board[player_move.to.x][player_move.to.y].piece = new Rook{ player_move.promotion_to,
                                                                    piece_from->player_side, player_move.to };
+        delete piece_from;
         break;
     case KNIGHT:
         board[player_move.to.x][player_move.to.y].piece = new Knight{ player_move.promotion_to,
                                                                      piece_from->player_side, player_move.to };
+        delete piece_from;
         break;
     case KING:
         board[player_move.to.x][player_move.to.y].piece = new King{ player_move.promotion_to,
                                                                    piece_from->player_side, player_move.to };
+        delete piece_from;
         break;
     case QUEEN:
         board[player_move.to.x][player_move.to.y].piece = new Queen{ player_move.promotion_to,
                                                                     piece_from->player_side, player_move.to };
+        delete piece_from;
         break;
     default:
         board[player_move.to.x][player_move.to.y].piece = board[player_move.from.x][player_move.from.y].piece;
         board[player_move.to.x][player_move.to.y].piece->coord = player_move.to;
         break;
     }
+
     board[player_move.from.x][player_move.from.y].piece = nullptr;
 
     // Step 6 - adds the move to the past moves vector so it is possible for the move to be undone
@@ -291,6 +298,9 @@ void BoardStructure::pop_move(bool pop_past_possible_moves)
 
     // Step 2 - creates variables for better code readability and development time as I
     // won't have to keep retyping long lines of code to access what these variables store
+    if (past_moves.size() == 0) {
+        std::cout << "ERROR - ATTEMPT TO UNDO MOVE WHEN IT IS THE FIRST MOVE OF THE MATCH" << std::endl;
+    }
     PastMove last_move = past_moves.back();
     BoardCell* board_cell_to = &board[last_move.to.x][last_move.to.y];
 
@@ -299,36 +309,40 @@ void BoardStructure::pop_move(bool pop_past_possible_moves)
     switch (last_move.promoted_from)
     {
     case PAWN:
+        delete board_cell_to->piece;
         board[last_move.to.x][last_move.to.y].piece = new Pawn{ last_move.promoted_from,
                                                                last_move.player_side, board_cell_to->coord };
         break;
     case BISHOP:
+        delete board_cell_to->piece;
         board[last_move.to.x][last_move.to.y].piece = new Bishop{ last_move.promoted_from,
                                                                  last_move.player_side, board_cell_to->coord };
         break;
     case ROOK:
+        delete board_cell_to->piece;
         board[last_move.to.x][last_move.to.y].piece = new Rook{ last_move.promoted_from,
                                                                last_move.player_side, board_cell_to->coord };
         break;
     case KNIGHT:
+        delete board_cell_to->piece;
         board[last_move.to.x][last_move.to.y].piece = new Knight{ last_move.promoted_from,
                                                                  last_move.player_side, board_cell_to->coord };
         break;
     case KING:
+        delete board_cell_to->piece;
         board[last_move.to.x][last_move.to.y].piece = new King{ last_move.promoted_from,
                                                                last_move.player_side, board_cell_to->coord };
         break;
     case QUEEN:
+        delete board_cell_to->piece;
         board[last_move.to.x][last_move.to.y].piece = new Queen{ last_move.promoted_from,
                                                                 last_move.player_side, board_cell_to->coord };
         break;
     default:
         break;
     }
-
     board_cell_to->piece->coord = last_move.from;
     board[last_move.from.x][last_move.from.y].piece = board_cell_to->piece;
-    board_cell_to->piece = nullptr;
 
     // Step 4 - places back any taken pieces back on the board, if there are none then the
     // piece is taken off the board cell it moved to during the last move
