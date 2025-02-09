@@ -160,7 +160,10 @@ QVariantList MatchReview::find_blunders()
                 match_blunders.append(blunder);
             }
         }
-        match_board.push_move(match_moves[move_number]);
+        bool is_legal = match_board.push_move(match_moves[move_number]);
+        if (is_legal == false) {
+            std::cout << "ERROR - INVALID MOVE" << std::endl;
+        }
     }
     return match_blunders;
 }

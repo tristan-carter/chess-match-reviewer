@@ -180,11 +180,17 @@ bool BoardStructure::push_move(Move& player_move, bool check_for_pin)
     for (Move& legal_move : possible_moves)
     {
         if(legal_move.is_enpassant == true) {
+            this->print_board();
             std::cout << "ENPASSANT TRUE 1" << std::endl;
+            std::cout << "ENPASSANT TRUE 1 a" << std::endl;
         }
         if(player_move.is_enpassant == true) {
+            this->print_board();
             std::cout << "ENPASSANT TRUE 2" << std::endl;
+            std::cout << "ENPASSANT TRUE 2 a" << std::endl;
         }
+
+
         if (legal_move == player_move)
         {
             if(legal_move.is_enpassant == true) {
