@@ -98,7 +98,7 @@ QVariantList MatchReview::find_blunders()
             short int user_move_eval;
             for (Move move: match_board.possible_moves) {
                 short int eval_score = this->negamax_alpha_beta(match_board,
-                                                                -9999, 9999, TREE_DEPTH);
+                    -9999, 9999, TREE_DEPTH);
 
                 // finds best alternative move
                 if (eval_score >= best_move_eval) {
