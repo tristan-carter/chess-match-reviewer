@@ -179,12 +179,20 @@ bool BoardStructure::push_move(Move& player_move, bool check_for_pin)
     bool is_legal{ false };
     for (Move& legal_move : possible_moves)
     {
+        if(legal_move.is_enpassant == true) {
+            std::cout << "ENPASSANT TRUE 1" << std::endl;
+        }
+        if(player_move.is_enpassant == true) {
+            std::cout << "ENPASSANT TRUE 2" << std::endl;
+        }
         if (legal_move == player_move)
         {
+            if(legal_move.is_enpassant == true) {
+                std::cout << "ENPASSANT TRUE 3" << std::endl;
+            }
             is_legal = true;
             legal_move.promotion_to = player_move.promotion_to;
             player_move = legal_move;
-
         }
     }
     if (is_legal == false && check_for_pin)
@@ -435,12 +443,13 @@ BoardStructure::IsMoveLegalResult BoardStructure::is_move_legal(Move& possible_m
 
 void BoardStructure::add_possible_move(Coord move_to, Coord piece_position,
                                        Coord piece_taken_position, bool check_for_pin,
-                                       bool is_pawn, bool is_castle)
+                                       bool is_pawn, bool is_castle, bool is_enpassant)   // has been added after end of sprint 1 testing
 {
     // Step 1 - constructs a possible move using the variables passed to the method but
     // with the promotion_to attribute initially defined to NOPIECE as this will be
     // properly defined in Step 2
-    Move possible_move{piece_position, move_to, piece_taken_position, NOPIECE, is_castle, false};
+    Move possible_move{piece_position, move_to,
+        piece_taken_position, NOPIECE, is_castle, false, is_enpassant};  // has been added after end of sprint 1 testing
 
     // Step 2 - if this possible move is for finding out whether another piece is pinned
     // then the method pushes the possible move straight onto pin_moves, if it is not
@@ -518,7 +527,7 @@ void BoardStructure::find_moves(bool check_for_pin)
                 // BoardStructure's add_possible_move method on each
                 // possible move found for that individual piece
                 board_cell.piece->add_possible_moves(*this,
-                                                     player_move_multiplier, check_for_pin, board_cell);
+                    player_move_multiplier, check_for_pin, board_cell);
             }
         }
     }

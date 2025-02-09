@@ -19,7 +19,7 @@ void King::add_possible_moves(BoardStructure& board,
         bool has_king_moved{ false };
         for (PastMove& past_move : board.past_moves)
         {
-            if (past_move.from == board.board[4][piece_position.y].coord)
+            if (past_move.from == board.board[4][7 * board_cell.piece->player_side].coord)
             {
                 has_king_moved = true;
             }
@@ -33,11 +33,11 @@ void King::add_possible_moves(BoardStructure& board,
             bool left_rook_moved{ false };
             for (PastMove& past_move : board.past_moves)
             {
-                if (past_move.from == board.board[7][piece_position.y].coord)
+                if (past_move.from == board.board[7][7 * board_cell.piece->player_side].coord)
                 {
                     right_rook_moved = true;
                 }
-                if (past_move.from == board.board[0][piece_position.y].coord)
+                if (past_move.from == board.board[0][7 * board_cell.piece->player_side].coord)
                 {
                     left_rook_moved = true;
                 }

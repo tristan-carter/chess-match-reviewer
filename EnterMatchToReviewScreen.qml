@@ -175,6 +175,48 @@ Window {
             }
         }
 
+        // Popup shown if user presses start review but there are no blunders
+        Popup {
+            id: noBlundersInMatch
+            modal: true
+            focus: true
+            anchors.centerIn: parent
+            width: 210
+            height: 145
+            background: Rectangle {
+                color: "#E0AFA0"
+                radius: 8
+            }
+            Column {
+                width: 205
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 11
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "None of your moves were blunders, well done!"
+                    wrapMode: Text.WordWrap
+                    width: 190
+                    font.pixelSize: 17
+                    horizontalAlignment: Text.AlignHCenter
+                    color: "#1A1A1A"
+                }
+                Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "Go back"
+                    width: 170
+                    height: 52
+                    font.bold: true
+                    font.pixelSize: 25
+                    background: Rectangle {
+                        color: "#F4F3EE"
+                        radius: 8
+                    }
+                    onClicked: {
+                        noBlundersInMatch.close()
+                    }
+                }
+            }
+        }
 
         // Start Review Section
         Rectangle {
@@ -206,9 +248,25 @@ Window {
                     }
                     onClicked: {
                         var matchBlunders = match_review.find_blunders()
-                        var matchReviewScreen = Qt.createComponent("MatchReviewScreen.qml").createObject(parent)
-                        matchReviewScreen.matchBlunders = matchBlunders
-                        matchReviewScreen.show()
+
+                        // checks if any blunders were made
+                        if (matchBlunders.length > 0) {
+                            // takes the user to the match review screen to review the blunders they made
+                            var matchReviewScreen = Qt.createComponent("MatchReviewScreen.qml").createObject(parent, {
+                                matchBlunders: matchBlunders
+                            });
+
+                            // error checking in case the screen doesn't load
+                            if (!matchReviewScreen) {
+                                console.error("ERROR - matchReviewScreen failed to create");
+                                return;
+                            }
+
+                            matchReviewScreen.show();
+                        } else {
+                            // tells the user they made no blunders
+                            noBlundersInMatch.open()
+                        }
                     }
                 }
             }

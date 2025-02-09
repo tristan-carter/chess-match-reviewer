@@ -32,7 +32,6 @@ void Pawn::add_possible_moves(BoardStructure& board,
         }
     }
 
-
     // take piece to the right
     possible_move_to.x = piece_position.x + 1;
     possible_move_to.y = piece_position.y + player_move_multiplier;
@@ -43,7 +42,7 @@ void Pawn::add_possible_moves(BoardStructure& board,
             && piece_to_capture_cell.piece->player_side != board_cell.piece->player_side)
         {
             board.add_possible_move(possible_move_to,
-                                    piece_position, piece_to_capture_cell.coord, check_for_pin, true);
+                                    piece_position, possible_move_to, check_for_pin, true);
         }
     }
 
@@ -57,7 +56,7 @@ void Pawn::add_possible_moves(BoardStructure& board,
             && piece_to_capture_cell.piece->player_side != board_cell.piece->player_side)
         {
             board.add_possible_move(possible_move_to,
-                                    piece_position, piece_to_capture_cell.coord, check_for_pin, true);
+                                    piece_position, possible_move_to, check_for_pin, true);
         }
     }
 
@@ -78,8 +77,8 @@ void Pawn::add_possible_moves(BoardStructure& board,
                 && last_move.to == piece_to_capture_cell.coord
                 && last_move.from.y - (player_move_multiplier * 2) == piece_to_capture_cell.coord.y)
             {
-                board.add_possible_move(possible_move_to,
-                                        piece_position, piece_to_capture_cell.coord, check_for_pin, true);
+                board.add_possible_move(possible_move_to, piece_position, piece_to_capture_cell.coord,
+                    check_for_pin, true, false, true);   // has been added after end of sprint 1 testing
             }
         }
 
@@ -95,8 +94,8 @@ void Pawn::add_possible_moves(BoardStructure& board,
                 && last_move.to == piece_to_capture_cell.coord
                 && last_move.from.y - (player_move_multiplier * 2) == piece_to_capture_cell.coord.y)
             {
-                board.add_possible_move(possible_move_to,
-                                        piece_position, piece_to_capture_cell.coord, check_for_pin, true);
+                board.add_possible_move(possible_move_to, piece_position, piece_to_capture_cell.coord,
+                    check_for_pin, true, false, true);   // has been added after end of sprint 1 testing
             }
         }
     }

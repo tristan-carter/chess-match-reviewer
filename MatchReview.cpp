@@ -78,13 +78,15 @@ QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, 
 
     QVariantList boardGUI_variant_list = this->convert_board_to_QML_board();
 
-    match_board.print_board();
     return boardGUI_variant_list;
 }
 
 // in progress
 QVariantList MatchReview::find_blunders()
 {
+    if (match_moves.size() == 0) {
+        return QVariantList();
+    }
     // undoes all moves made on board during entering of match
     for (short int i = 0; i < match_moves.size()-1; i++) {
         match_board.pop_move();
@@ -97,7 +99,8 @@ QVariantList MatchReview::find_blunders()
             Move best_move;
             short int best_move_eval = -9999;
             short int user_move_eval;
-            for (Move move: match_board.possible_moves) {
+            std::vector<Move> current_possible_moves = match_board.possible_moves;
+            for (Move move: current_possible_moves) {
                 match_board.push_move(move);
                 short int eval_score = -this->negamax_alpha_beta(match_board,
                     -9999, 9999, TREE_DEPTH);
