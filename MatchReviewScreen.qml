@@ -140,12 +140,12 @@ Window {
                     background: Rectangle {
                         color: {
                             if (row === blunderFromY && col === blunderFromX)
-                                return "#FF0000"; // Red for blunder start (changed from grey)
+                                return "#FF0000"; // Red for blunder start
                             else if (row === blunderToY && col === blunderToX)
                                 return "#FF0000"; // Red for blunder end
                             else if (row === bestMoveFromY && col === bestMoveFromX) {
                                 return (blunderFromX === bestMoveFromX && blunderFromY === bestMoveFromY)
-                                       ? "#FF0000" // Red if same as blunder start (changed from grey)
+                                       ? "#FF0000" // Red if same as blunder start
                                        : "#00FF00"; // Green for best move start
                             }
                             else if (row === bestMoveToY && col === bestMoveToX)
