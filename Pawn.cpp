@@ -78,7 +78,7 @@ void Pawn::add_possible_moves(BoardStructure& board,
                 && last_move.from.y - (player_move_multiplier * 2) == piece_to_capture_cell.coord.y)
             {
                 board.add_possible_move(possible_move_to, piece_position, piece_to_capture_cell.coord,
-                    check_for_pin, true, false, true);   // has been added after end of sprint 1 testing
+                    check_for_pin, true, false);
             }
         }
 
@@ -95,7 +95,7 @@ void Pawn::add_possible_moves(BoardStructure& board,
                 && last_move.from.y - (player_move_multiplier * 2) == piece_to_capture_cell.coord.y)
             {
                 board.add_possible_move(possible_move_to, piece_position, piece_to_capture_cell.coord,
-                    check_for_pin, true, false, true);   // has been added after end of sprint 1 testing
+                    check_for_pin, true, false);
             }
         }
     }

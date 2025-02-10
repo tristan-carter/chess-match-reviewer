@@ -436,13 +436,13 @@ BoardStructure::IsMoveLegalResult BoardStructure::is_move_legal(Move& possible_m
 
 void BoardStructure::add_possible_move(Coord move_to, Coord piece_position,
                                        Coord piece_taken_position, bool check_for_pin,
-                                       bool is_pawn, bool is_castle, bool is_enpassant)   // has been added after end of sprint 1 testing
+                                       bool is_pawn, bool is_castle)   // has been added after end of sprint 1 testing
 {
     // Step 1 - constructs a possible move using the variables passed to the method but
     // with the promotion_to attribute initially defined to NOPIECE as this will be
     // properly defined in Step 2
     Move possible_move{piece_position, move_to,
-        piece_taken_position, NOPIECE, is_castle, false, is_enpassant};  // has been added after end of sprint 1 testing
+        piece_taken_position, NOPIECE, is_castle, false};  // has been added after end of sprint 1 testing
 
     // Step 2 - if this possible move is for finding out whether another piece is pinned
     // then the method pushes the possible move straight onto pin_moves, if it is not
