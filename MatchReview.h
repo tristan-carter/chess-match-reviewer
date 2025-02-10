@@ -50,7 +50,7 @@ private:
 
     std::vector<Move> match_moves;
     PlayerSide user_side;
-    const short int TREE_DEPTH{ 3 };
+    const short int TREE_DEPTH{ 1 };
 
     // tree traversal methods
     short int negamax_alpha_beta(BoardStructure& board, short int alpha, short int beta, short int treeDepthLeft);

@@ -93,7 +93,9 @@ QVariantList MatchReview::find_blunders()
     QVariantList match_blunders = {};
     for (int move_number = 0; move_number < match_moves.size(); move_number++)
     {
-        if (move_number % 2 == user_side) {
+        if ((move_number + 1) % 2 == user_side) {
+            QVariantMap blunder;
+
             // evaluates all possible moves
             Move best_move;
             short int best_move_eval = -9999;
@@ -101,9 +103,8 @@ QVariantList MatchReview::find_blunders()
             std::vector<Move> current_possible_moves = match_board.possible_moves;
             for (Move move: current_possible_moves) {
                 match_board.push_move(move);
-                short int eval_score = -this->negamax_alpha_beta(match_board,
+                short int eval_score = this->negamax_alpha_beta(match_board,
                     -9999, 9999, TREE_DEPTH);
-                match_board.pop_move();
 
                 // finds best alternative move
                 if (eval_score >= best_move_eval) {
@@ -114,7 +115,9 @@ QVariantList MatchReview::find_blunders()
                 // checks if this move was the move made by the user
                 if (move == match_moves[move_number]) {
                     user_move_eval = eval_score;
+                    blunder["boardBeforeBlunder"] = this->convert_board_to_QML_board();
                 }
+                match_board.pop_move();
             }
 
             // determines whether user's move was a blunder based on whether the move was 2/3 of a bishop's
@@ -125,8 +128,6 @@ QVariantList MatchReview::find_blunders()
                 // 2. the coordinate of the square the piece moves to in the blunder
                 // 3. the coordinate of the square the piece should have moved from and to for the best move
                 // 4. a score from 1-100 as to how severe the blunder was
-                QVariantMap blunder;
-                blunder["boardBeforeBlunder"] = this->convert_board_to_QML_board();
 
                 blunder["blunder_from_x"] = match_moves[move_number].from.x;
                 blunder["blunder_from_y"] = match_moves[move_number].from.y;

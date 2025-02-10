@@ -13,6 +13,15 @@ Window {
     property int matchReviewCurrentBlunderIndex: 0
     property var matchBlunders: []
 
+    property int blunderFromX: 0
+        property int blunderFromY: 0
+        property int blunderToX: 0
+        property int blunderToY: 0
+        property int bestMoveFromX: 0
+        property int bestMoveFromY: 0
+        property int bestMoveToX: 0
+        property int bestMoveToY: 0
+
     // updated the board GUI to show a new blunder move, is called
     // whenever the "Next" or "Back" buttons are pressed to navigate
     // through the blunders they made during the match
@@ -30,52 +39,17 @@ Window {
             }
             guiChessBoard.guiChessBoardOutputGrid = updatedGUIChessBoard
 
+            // makes info about the current blunder being shown accessible to the board GUI
+            // so the board GUI squares can work out what colour they need to be
+            blunderFromX = currentBlunder["blunder_from_x"]
+            blunderFromY = currentBlunder["blunder_from_y"]
+            blunderToX = currentBlunder["blunder_to_x"]
+            blunderToY = currentBlunder["blunder_to_y"]
 
-            var blunderFromSquareIndex = currentBlunder["blunder_from_x"] +
-                                         currentBlunder["blunder_from_y"] * 8
-            var blunderToSquareIndex = currentBlunder["blunder_to_x"] +
-                                       currentBlunder["blunder_to_y"] * 8
-
-            // Set the square colors based on the blunder and best move
-            guiChessBoard.guiChessBoardOutputGrid.forEach(function(row, y) {
-                row.forEach(function(cell, x) {
-                    var index = x + y * 8;
-
-                    // Reset the background color of all squares
-                    guiChessBoard.guiChessBoardOutputGrid[y][x] = {
-                        color: (index + Math.floor(index / 8)) % 2 === 0 ? "#EEEED2" : "#769656",
-                        text: cell
-                    };
-
-                    // highlights the blunder's starting square in light grey
-                    if (index === blunderFromSquareIndex) {
-                        guiChessBoard.guiChessBoardOutputGrid[y][x].color = "#D3D3D3"
-                    }
-
-                    // Highlight the blunder's end square in red
-                    if (index === blunderToSquareIndex) {
-                        guiChessBoard.guiChessBoardOutputGrid[y][x].color = "#FF0000"
-                    }
-
-                    // Highlight the best move's squares in green
-                    var bestMoveFromIndex = currentBlunder["best_from_x"] +
-                                            currentBlunder["best_from_y"] * 8
-                    var bestMoveToIndex = currentBlunder["best_to_x"] +
-                                          currentBlunder["best_to_y"] * 8
-
-                    if (index === bestMoveFromIndex || index === bestMoveToIndex) {
-                        guiChessBoard.guiChessBoardOutputGrid[y][x].color = "#00FF00"
-                    }
-                })
-            })
-
-            blunderSquare.x = currentBlunder["blunder_to_x"]
-            blunderSquare.y = currentBlunder["blunder_to_y"]
-
-            bestMoveFrom.x = currentBlunder["best_from_x"]
-            bestMoveFrom.y = currentBlunder["best_from_y"]
-            bestMoveTo.x = currentBlunder["best_to_x"]
-            bestMoveTo.y = currentBlunder["best_to_y"]
+            bestMoveFromX = currentBlunder["best_from_x"]
+            bestMoveFromY = currentBlunder["best_from_y"]
+            bestMoveToX = currentBlunder["best_to_x"]
+            bestMoveToY = currentBlunder["best_to_y"]
         }
     }
 
@@ -156,14 +130,29 @@ Window {
             Repeater {
                 model: 64
                 Button {
+                    property int row: Math.floor(index / 8)
+                    property int col: index % 8
+
                     width: 70
                     height: 70
-                    text: guiChessBoard.guiChessBoardOutputGrid[
-                              Math.floor(index / 8)][index % 8]
+                    text: guiChessBoard.guiChessBoardOutputGrid[row][col]
                     font.pixelSize: 58
                     background: Rectangle {
-                        color: (index + Math.floor(index / 8)) % 2
-                               === 0 ? "#EEEED2" : "#769656"
+                        color: {
+                            if (row === blunderFromY && col === blunderFromX)
+                                return "#FF0000"; // Red for blunder start (changed from grey)
+                            else if (row === blunderToY && col === blunderToX)
+                                return "#FF0000"; // Red for blunder end
+                            else if (row === bestMoveFromY && col === bestMoveFromX) {
+                                return (blunderFromX === bestMoveFromX && blunderFromY === bestMoveFromY)
+                                       ? "#FF0000" // Red if same as blunder start (changed from grey)
+                                       : "#00FF00"; // Green for best move start
+                            }
+                            else if (row === bestMoveToY && col === bestMoveToX)
+                                return "#00FF00"; // Green for best move end
+                            else
+                                return ((row + col) % 2 === 0) ? "#EEEED2" : "#769656"; // Normal board colors
+                        }
                         border.color: "#2A2623"
                         border.width: 0.5
                     }
