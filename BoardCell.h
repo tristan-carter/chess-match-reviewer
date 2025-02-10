@@ -6,6 +6,5 @@ class BoardCell
 {
 public:
     Coord coord;
-    BoardCell(const BoardCell&) = delete;
     Piece* piece;
 };

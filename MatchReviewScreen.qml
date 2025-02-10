@@ -13,44 +13,53 @@ Window {
     property int matchReviewCurrentBlunderIndex: 0
     property var matchBlunders: []
 
+    // storage of coordinates about blunder and alternative
+    // best move being shown so board squares can know if
+    // they need to be red or green instead of their normal
+    // colour
     property int blunderFromX: 0
-        property int blunderFromY: 0
-        property int blunderToX: 0
-        property int blunderToY: 0
-        property int bestMoveFromX: 0
-        property int bestMoveFromY: 0
-        property int bestMoveToX: 0
-        property int bestMoveToY: 0
+    property int blunderFromY: 0
+    property int blunderToX: 0
+    property int blunderToY: 0
+
+    property int bestMoveFromX: 0
+    property int bestMoveFromY: 0
+    property int bestMoveToX: 0
+    property int bestMoveToY: 0
+
+    // enables/d
+    property bool next_blunder_available: false
+    property bool previous_blunder_available: false
 
     // updated the board GUI to show a new blunder move, is called
     // whenever the "Next" or "Back" buttons are pressed to navigate
     // through the blunders they made during the match
     function updateGUIBoardBlunder() {
-        if (matchBlunders.length > 0
-                && matchBlunders[matchReviewCurrentBlunderIndex]) {
-            var currentBlunder = matchBlunders[matchReviewCurrentBlunderIndex]
-            var updated1dGUIChessBoard = currentBlunder["boardBeforeBlunder"]
+        var currentBlunder = matchBlunders[matchReviewCurrentBlunderIndex]
+        var updated1dGUIChessBoard = currentBlunder["boardBeforeBlunder"]
 
-            // converts received 1d board into a 2d board so it can be displayed by the GUI
-            var updatedGUIChessBoard = [];
-            for (var y = 0; y < 8; y++) {
-                updatedGUIChessBoard.push(
-                            updated1dGUIChessBoard.slice(y * 8, (y + 1) * 8) )
-            }
-            guiChessBoard.guiChessBoardOutputGrid = updatedGUIChessBoard
-
-            // makes info about the current blunder being shown accessible to the board GUI
-            // so the board GUI squares can work out what colour they need to be
-            blunderFromX = currentBlunder["blunder_from_x"]
-            blunderFromY = currentBlunder["blunder_from_y"]
-            blunderToX = currentBlunder["blunder_to_x"]
-            blunderToY = currentBlunder["blunder_to_y"]
-
-            bestMoveFromX = currentBlunder["best_from_x"]
-            bestMoveFromY = currentBlunder["best_from_y"]
-            bestMoveToX = currentBlunder["best_to_x"]
-            bestMoveToY = currentBlunder["best_to_y"]
+        // converts received 1d board into a 2d board so it can be displayed by the GUI
+        var updatedGUIChessBoard = [];
+        for (var y = 0; y < 8; y++) {
+            updatedGUIChessBoard.push(
+                        updated1dGUIChessBoard.slice(y * 8, (y + 1) * 8) )
         }
+        guiChessBoard.guiChessBoardOutputGrid = updatedGUIChessBoard
+
+        // makes info about the current blunder being shown accessible to the board GUI
+        // so the board GUI squares can work out what colour they need to be
+        blunderFromX = currentBlunder["blunder_from_x"]
+        blunderFromY = currentBlunder["blunder_from_y"]
+        blunderToX = currentBlunder["blunder_to_x"]
+        blunderToY = currentBlunder["blunder_to_y"]
+
+        bestMoveFromX = currentBlunder["best_from_x"]
+        bestMoveFromY = currentBlunder["best_from_y"]
+        bestMoveToX = currentBlunder["best_to_x"]
+        bestMoveToY = currentBlunder["best_to_y"]
+
+        next_blunder_available = matchReviewCurrentBlunderIndex < matchBlunders.length - 1
+        previous_blunder_available = matchReviewCurrentBlunderIndex > 0
     }
 
     // updates the board gui as soon as the screen has finished
@@ -84,16 +93,16 @@ Window {
                 // Button to go to next blunder
                 Button {
                     Layout.alignment: Qt.AlignHCenter
-                    text: "Next"
+                    text: next_blunder_available ? "Next" : "No more blunders"
                     font.bold: true
                     Layout.preferredWidth: 170
                     Layout.preferredHeight: 55
-                    font.pixelSize: 25
+                    font.pixelSize: next_blunder_available ? 25 : 15
                     background: Rectangle {
                         color: "#F4F3EE"
                         radius: 10
                     }
-                    enabled: matchReviewCurrentBlunderIndex < matchBlunders.length - 1
+                    enabled: next_blunder_available
                     onClicked: {
                         matchReviewCurrentBlunderIndex += 1
                         updateGUIBoardBlunder()
@@ -102,16 +111,16 @@ Window {
                 // Button to go to previous blunder
                 Button {
                     Layout.alignment: Qt.AlignHCenter
-                    text: "Back"
+                    text: previous_blunder_available ? "Back" : "No previous blunders"
                     font.bold: true
                     Layout.preferredWidth: 170
                     Layout.preferredHeight: 55
-                    font.pixelSize: 25
+                    font.pixelSize: previous_blunder_available ? 25 : 15
                     background: Rectangle {
                         color: "#F4F3EE"
                         radius: 10
                     }
-                    enabled: matchReviewCurrentBlunderIndex > 0
+                    enabled: previous_blunder_available
                     onClicked: {
                         matchReviewCurrentBlunderIndex -= 1
                         updateGUIBoardBlunder()
@@ -140,18 +149,19 @@ Window {
                     background: Rectangle {
                         color: {
                             if (row === blunderFromY && col === blunderFromX)
-                                return "#FF0000"; // Red for blunder start
+                                return "#FF0000"; // red for blunder start board square
                             else if (row === blunderToY && col === blunderToX)
-                                return "#FF0000"; // Red for blunder end
+                                return "#FF0000"; // red for blunder end board square
                             else if (row === bestMoveFromY && col === bestMoveFromX) {
                                 return (blunderFromX === bestMoveFromX && blunderFromY === bestMoveFromY)
-                                       ? "#FF0000" // Red if same as blunder start
-                                       : "#00FF00"; // Green for best move start
+                                       ? "#FF0000" // red if same as blunder start board square
+                                       : "#00FF00"; // bright green for best move start board square
                             }
                             else if (row === bestMoveToY && col === bestMoveToX)
-                                return "#00FF00"; // Green for best move end
+                                return "#00FF00"; // bright green for best move end board square
                             else
-                                return ((row + col) % 2 === 0) ? "#EEEED2" : "#769656"; // Normal board colors
+                                return ((row + col) % 2 === 0) ? "#EEEED2" : "#769656"; // normal board square colours
+                                // alternating between dark green and cream as is standard for chess boards
                         }
                         border.color: "#2A2623"
                         border.width: 0.5

@@ -30,21 +30,6 @@ public:
 
     BoardStructure match_board;
 private:
-    struct Blunder {
-        QVariantList boardBeforeBlunder;
-
-        short int blunder_from_x;
-        short int blunder_from_y;
-        short int blunder_to_x;
-        short int blunder_to_y;
-
-        short int best_from_x;
-        short int best_from_y;
-        short int best_to_x;
-        short int best_to_y;
-
-        short int severity;
-    };
 
     QVariantList convert_board_to_QML_board();
 

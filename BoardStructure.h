@@ -38,7 +38,7 @@ public:
     void pop_move(bool pop_past_possible_moves = true);
     void add_possible_move(Coord move_to, Coord piece_position,
                            Coord piece_taken_position, bool check_for_pin = false,
-                           bool is_pawn = false, bool is_castle = false); // has been added after end of sprint 1 testing
+                           bool is_pawn = false, bool is_castle = false);
     IsMoveLegalResult is_move_legal(Move& possible_move);
     bool in_check();
 
