@@ -81,14 +81,13 @@ QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, 
     return boardGUI_variant_list;
 }
 
-// in progress
 QVariantList MatchReview::find_blunders()
 {
     if (match_moves.size() == 0) {
         return QVariantList();
     }
     // undoes all moves made on board during entering of match
-    for (short int i = 0; i < match_moves.size()-1; i++) {
+    for (short int i = 0; i < match_moves.size(); i++) {
         match_board.pop_move();
     }
     QVariantList match_blunders = {};
@@ -104,7 +103,6 @@ QVariantList MatchReview::find_blunders()
                 match_board.push_move(move);
                 short int eval_score = -this->negamax_alpha_beta(match_board,
                     -9999, 9999, TREE_DEPTH);
-
                 match_board.pop_move();
 
                 // finds best alternative move
@@ -119,22 +117,14 @@ QVariantList MatchReview::find_blunders()
                 }
             }
 
-            // determines whether user's move was a blunder
-            if (best_move_eval - user_move_eval > 300) {
-                // needs to store 4 pieces of information:
+            // determines whether user's move was a blunder based on whether the move was 2/3 of a bishop's
+            // worth worse than the best available move
+            if (best_move_eval - user_move_eval > 200) {
+                // Stores 4 pieces of information needed for the match review:
                 // 1. the board just before the blunder is made as a QVariantList
                 // 2. the coordinate of the square the piece moves to in the blunder
                 // 3. the coordinate of the square the piece should have moved from and to for the best move
                 // 4. a score from 1-100 as to how severe the blunder was
-                short int blunder_from_x;
-                short int blunder_from_y;
-                short int blunder_to_x;
-                short int blunder_to_y;
-
-                short int best_from_x;
-                short int best_from_y;
-                short int best_to_x;
-                short int best_to_y;
                 QVariantMap blunder;
                 blunder["boardBeforeBlunder"] = this->convert_board_to_QML_board();
 
@@ -151,6 +141,7 @@ QVariantList MatchReview::find_blunders()
                 short int blunder_severity = (best_move_eval - user_move_eval) / 10;
 
                 // validates that the blunder severity is not over its maximum value of 100
+                // and if it is then sets it back down to 100
                 if (blunder_severity > 100) {
                     blunder_severity = 100;
                 }

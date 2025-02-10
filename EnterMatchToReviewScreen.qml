@@ -10,201 +10,41 @@ Window {
     title: "Chess Reviewer"
     color: "#463F3A"
 
-    // Horizontally lays out the 3 sections of the
-    // screen (start button, board and explanation of the screen)
-    RowLayout {
+    // Pop up shown when chess reviewer application is opened, allows user to
+    // select which side they played during the match they want to review
+    Popup {
+        id: chooseUserSide
+        modal: true
+        focus: true
         anchors.centerIn: parent
-        spacing: 20
-        Layout.alignment: Qt.AlignVCenter
-
-        // Pop up shown when chess reviewer application is opened, allows user to
-        // select which side they played during the match they want to review
-        Popup {
-            id: chooseUserSide
-            modal: true
-            focus: true
-            anchors.centerIn: parent
-            width: 210
-            height: 140
-            background: Rectangle {
-                color: "#E0AFA0"
-                radius: 8
-            }
-            Column {
-                width: 195
-                anchors.centerIn: parent
-                spacing: 11
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "Select the side you played during the match you would like to review"
-                    wrapMode: Text.WordWrap
-                    width: 190
-                    font.pixelSize: 16
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    color: "#1A1A1A"
-                }
-                Row {
-                    spacing: 20
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    Button {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: "White"
-                        width: 85
-                        height: 47
-                        font.bold: true
-                        font.pixelSize: 25
-                        background: Rectangle {
-                            color: "#F4F3EE"
-                            radius: 8
-                        }
-                        onClicked: {
-                            match_review.enter_user_side(0)
-                            chooseUserSide.close()
-                        }
-                    }
-                    Button {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: "Black"
-                        width: 85
-                        height: 47
-                        font.bold: true
-                        font.pixelSize: 25
-                        background: Rectangle {
-                            color: "#F4F3EE"
-                            radius: 8
-                        }
-                        onClicked: {
-                            match_review.enter_user_side(1)
-                            chooseUserSide.close()
-                        }
-                    }
-                }
-            }
+        width: 210
+        height: 140
+        background: Rectangle {
+            color: "#E0AFA0"
+            radius: 8
         }
-        // opens pop up for user to select side played during match once GUI
-        // screen for revieweing has loaded
-        Component.onCompleted: chooseUserSide.open()
-
-        // Pop up for selecting which type of piece to promote a pawn to once it reaches
-        // the end of the board
-        Popup {
-            id: choosePromotedPieceType
-            modal: true
-            focus: true
+        Column {
+            width: 195
             anchors.centerIn: parent
-            width: 320
-            height: 125
-            background: Rectangle {
-                color: "#E0AFA0"
-                radius: 8
-            }
-            Column {
-                anchors.centerIn: parent
-                spacing: 11
-                Text {
-                    text: "Select the piece to promote your pawn to"
-                    font.pixelSize: 16
-                    color: "#1A1A1A"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-                Row {
-                    spacing: 10
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    // promote to bishop
-                    Button {
-                        text: "♗"
-                        font.pixelSize: 38
-                        width: 50
-                        height: 50
-                        background: Rectangle {
-                            color: "#F4F3EE"
-                            radius: 10
-                        }
-                        onClicked: {
-                            callEnterMoveFromMatch(2)
-                            choosePromotedPieceType.close()
-                        }
-                    }
-                    // promote to knight
-                    Button {
-                        text: "♘"
-                        font.pixelSize: 38
-                        width: 50
-                        height: 50
-                        background: Rectangle {
-                            color: "#F4F3EE"
-                            radius: 10
-                        }
-                        onClicked: {
-                            callEnterMoveFromMatch(3)
-                            choosePromotedPieceType.close()
-                        }
-                    }
-                    // promote to rook
-                    Button {
-                        text: "♖"
-                        font.pixelSize: 38
-                        width: 50
-                        height: 50
-                        background: Rectangle {
-                            color: "#F4F3EE"
-                            radius: 10
-                        }
-                        onClicked: {
-                            callEnterMoveFromMatch(4)
-                            choosePromotedPieceType.close()
-                        }
-                    }
-                    // promote to queen
-                    Button {
-                        text: "♕"
-                        font.pixelSize: 38
-                        width: 50
-                        height: 50
-                        background: Rectangle {
-                            color: "#F4F3EE"
-                            radius: 10
-                        }
-                        onClicked: {
-                            guiChessBoard.callEnterMoveFromMatch(5)
-                            choosePromotedPieceType.close()
-                        }
-                    }
-                }
-            }
-        }
-
-        // Popup shown if user presses start review but there are no blunders
-        Popup {
-            id: noBlundersInMatch
-            modal: true
-            focus: true
-            anchors.centerIn: parent
-            width: 210
-            height: 145
-            background: Rectangle {
-                color: "#E0AFA0"
-                radius: 8
-            }
-            Column {
-                width: 205
+            spacing: 11
+            Text {
+                Layout.alignment: Qt.AlignHCenter
+                text: "Select the side you played during the match you would like to review"
+                wrapMode: Text.WordWrap
+                width: 190
+                font.pixelSize: 16
+                horizontalAlignment: Text.AlignHCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 11
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "None of your moves were blunders, well done!"
-                    wrapMode: Text.WordWrap
-                    width: 190
-                    font.pixelSize: 17
-                    horizontalAlignment: Text.AlignHCenter
-                    color: "#1A1A1A"
-                }
+                color: "#1A1A1A"
+            }
+            Row {
+                spacing: 20
+                anchors.horizontalCenter: parent.horizontalCenter
                 Button {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "Go back"
-                    width: 170
-                    height: 52
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "White"
+                    width: 85
+                    height: 47
                     font.bold: true
                     font.pixelSize: 25
                     background: Rectangle {
@@ -212,11 +52,171 @@ Window {
                         radius: 8
                     }
                     onClicked: {
-                        noBlundersInMatch.close()
+                        match_review.enter_user_side(0)
+                        chooseUserSide.close()
+                    }
+                }
+                Button {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "Black"
+                    width: 85
+                    height: 47
+                    font.bold: true
+                    font.pixelSize: 25
+                    background: Rectangle {
+                        color: "#F4F3EE"
+                        radius: 8
+                    }
+                    onClicked: {
+                        match_review.enter_user_side(1)
+                        chooseUserSide.close()
                     }
                 }
             }
         }
+    }
+    // opens pop up for user to select side played during match once GUI
+    // screen for revieweing has loaded
+    Component.onCompleted: chooseUserSide.open()
+
+    // Pop up for selecting which type of piece to promote a pawn to once it reaches
+    // the end of the board
+    Popup {
+        id: choosePromotedPieceType
+        modal: true
+        focus: true
+        anchors.centerIn: parent
+        width: 320
+        height: 125
+        background: Rectangle {
+            color: "#E0AFA0"
+            radius: 8
+        }
+        Column {
+            anchors.centerIn: parent
+            spacing: 11
+            Text {
+                text: "Select the piece to promote your pawn to"
+                font.pixelSize: 16
+                color: "#1A1A1A"
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            Row {
+                spacing: 10
+                anchors.horizontalCenter: parent.horizontalCenter
+                // promote to bishop
+                Button {
+                    text: "♗"
+                    font.pixelSize: 38
+                    width: 50
+                    height: 50
+                    background: Rectangle {
+                        color: "#F4F3EE"
+                        radius: 10
+                    }
+                    onClicked: {
+                        callEnterMoveFromMatch(2)
+                        choosePromotedPieceType.close()
+                    }
+                }
+                // promote to knight
+                Button {
+                    text: "♘"
+                    font.pixelSize: 38
+                    width: 50
+                    height: 50
+                    background: Rectangle {
+                        color: "#F4F3EE"
+                        radius: 10
+                    }
+                    onClicked: {
+                        callEnterMoveFromMatch(3)
+                        choosePromotedPieceType.close()
+                    }
+                }
+                // promote to rook
+                Button {
+                    text: "♖"
+                    font.pixelSize: 38
+                    width: 50
+                    height: 50
+                    background: Rectangle {
+                        color: "#F4F3EE"
+                        radius: 10
+                    }
+                    onClicked: {
+                        callEnterMoveFromMatch(4)
+                        choosePromotedPieceType.close()
+                    }
+                }
+                // promote to queen
+                Button {
+                    text: "♕"
+                    font.pixelSize: 38
+                    width: 50
+                    height: 50
+                    background: Rectangle {
+                        color: "#F4F3EE"
+                        radius: 10
+                    }
+                    onClicked: {
+                        guiChessBoard.callEnterMoveFromMatch(5)
+                        choosePromotedPieceType.close()
+                    }
+                }
+            }
+        }
+    }
+
+    // Popup shown if user presses start review but there are no blunders
+    Popup {
+        id: noBlundersInMatch
+        modal: true
+        focus: true
+        anchors.centerIn: parent
+        width: 210
+        height: 145
+        background: Rectangle {
+            color: "#E0AFA0"
+            radius: 8
+        }
+        Column {
+            width: 205
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 11
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "None of your moves were blunders, well done!"
+                wrapMode: Text.WordWrap
+                width: 190
+                font.pixelSize: 17
+                horizontalAlignment: Text.AlignHCenter
+                color: "#1A1A1A"
+            }
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Go back"
+                width: 170
+                height: 52
+                font.bold: true
+                font.pixelSize: 25
+                background: Rectangle {
+                    color: "#F4F3EE"
+                    radius: 8
+                }
+                onClicked: {
+                    noBlundersInMatch.close()
+                }
+            }
+        }
+    }
+
+    // Horizontally lays out the 3 sections of the
+    // screen (start button, board and explanation of the screen)
+    RowLayout {
+        anchors.centerIn: parent
+        spacing: 20
+        Layout.alignment: Qt.AlignVCenter
 
         // Start Review Section
         Rectangle {
@@ -251,8 +251,10 @@ Window {
 
                         // checks if any blunders were made
                         if (matchBlunders.length > 0) {
-                            // takes the user to the match review screen to review the blunders they made
-                            var matchReviewScreen = Qt.createComponent("MatchReviewScreen.qml").createObject(parent, {
+                            // takes the user to the match review screen to review
+                            // the blunders they made
+                            var matchReviewScreen = Qt
+                            .createComponent("MatchReviewScreen.qml").createObject(parent, {
                                 matchBlunders: matchBlunders
                             });
 
@@ -295,8 +297,9 @@ Window {
             property int y_to: -1
 
             function callEnterMoveFromMatch(pieceToPromotePawnTo) {
-                var updated1dGUIChessBoard = match_review.enter_move_from_match(guiChessBoard.y_to, 7-guiChessBoard.x_to,
-                    guiChessBoard.y_from, 7 - guiChessBoard.x_from, pieceToPromotePawnTo)
+                var updated1dGUIChessBoard = match_review
+                .enter_move_from_match(guiChessBoard.y_to, 7-guiChessBoard.x_to,
+                guiChessBoard.y_from, 7 - guiChessBoard.x_from, pieceToPromotePawnTo)
 
                 // converts recieved 1d board into a 2d board so it can be displayed by the GUI
                 var updatedGUIChessBoard = []
@@ -334,10 +337,14 @@ Window {
                                 guiChessBoard.y_from = guiChessBoard.y_to
                             }
                         } else {
-                            // checks if a either a white or black is in a position where it now
+                            // checks if a either a white or black is in a
+                            // position where it now
                             // needs to be promoted
-                            var isPawnPromoting = (guiChessBoard.selectedPiece === "♙" && guiChessBoard.x_to === 0)
-                                    || (guiChessBoard.selectedPiece === "♟" && guiChessBoard.x_to === 7)
+                            var isPawnPromoting = (guiChessBoard.selectedPiece === "♙"
+                                && guiChessBoard.x_to === 0)
+                                || (guiChessBoard.selectedPiece === "♟"
+                                && guiChessBoard.x_to === 7)
+
                             if (isPawnPromoting) {
                                 choosePromotedPieceType.open()
                             } else {
@@ -365,7 +372,10 @@ Window {
                     anchors.centerIn: parent
                     width: parent.width - 20
                     wrapMode: Text.WordWrap
-                    text: "Replay the match you would like to review on the chess board before pressing start review. Move pieces by clicking a piece then clicking the square to move it to."
+                    text: "Replay the match you would like to review on the chess board before "
+                          + "pressing start review. Move pieces by clicking a piece then clicking "
+                          + "the square to move it to." // separated into
+                    // multiple lines so code is more readable
                     font.pixelSize: 16
                     color: "#1A1A1A"
                 }

@@ -48,8 +48,9 @@ void BoardStructure::print_board() {
                     if (board_piece->player_side == WHITE) { cout << " K "; }
                     else { cout << " k "; };
                     break;
+                case NOPIECE:
+                    break;
                 }
-
             }
         }
         cout << endl;
@@ -179,23 +180,8 @@ bool BoardStructure::push_move(Move& player_move, bool check_for_pin)
     bool is_legal{ false };
     for (Move& legal_move : possible_moves)
     {
-        if(legal_move.is_enpassant == true) {
-            this->print_board();
-            std::cout << "ENPASSANT TRUE 1" << std::endl;
-            std::cout << "ENPASSANT TRUE 1 a" << std::endl;
-        }
-        if(player_move.is_enpassant == true) {
-            this->print_board();
-            std::cout << "ENPASSANT TRUE 2" << std::endl;
-            std::cout << "ENPASSANT TRUE 2 a" << std::endl;
-        }
-
-
         if (legal_move == player_move)
         {
-            if(legal_move.is_enpassant == true) {
-                std::cout << "ENPASSANT TRUE 3" << std::endl;
-            }
             is_legal = true;
             legal_move.promotion_to = player_move.promotion_to;
             player_move = legal_move;
@@ -299,11 +285,10 @@ bool BoardStructure::push_move(Move& player_move, bool check_for_pin)
     // in which case the possible moves shouldn't be added to past_possible_moves as
     // the found possible moves will not contain the whether each move causes a check
     // and the pieces moving won't have been checked for being pinned)
+
+    // (updated, needs adding to pseudocode and updating dev screenshots)
     ++move_number;
     this->find_moves(check_for_pin);
-    if (check_for_pin) {
-        past_possible_moves.push_back(possible_moves);
-    }
 
     // Step 9 - returns true so the code which called this method knows
     // the move passed was legal and was pushed on the board successfully
@@ -330,32 +315,32 @@ void BoardStructure::pop_move(bool pop_past_possible_moves)
     {
     case PAWN:
         delete board_cell_to->piece;
-        board[last_move.to.x][last_move.to.y].piece = new Pawn{ last_move.promoted_from,
+        board_cell_to->piece = new Pawn{ last_move.promoted_from,
                                                                last_move.player_side, board_cell_to->coord };
         break;
     case BISHOP:
         delete board_cell_to->piece;
-        board[last_move.to.x][last_move.to.y].piece = new Bishop{ last_move.promoted_from,
+        board_cell_to->piece = new Bishop{ last_move.promoted_from,
                                                                  last_move.player_side, board_cell_to->coord };
         break;
     case ROOK:
         delete board_cell_to->piece;
-        board[last_move.to.x][last_move.to.y].piece = new Rook{ last_move.promoted_from,
+        board_cell_to->piece = new Rook{ last_move.promoted_from,
                                                                last_move.player_side, board_cell_to->coord };
         break;
     case KNIGHT:
         delete board_cell_to->piece;
-        board[last_move.to.x][last_move.to.y].piece = new Knight{ last_move.promoted_from,
+        board_cell_to->piece = new Knight{ last_move.promoted_from,
                                                                  last_move.player_side, board_cell_to->coord };
         break;
     case KING:
         delete board_cell_to->piece;
-        board[last_move.to.x][last_move.to.y].piece = new King{ last_move.promoted_from,
+        board_cell_to->piece = new King{ last_move.promoted_from,
                                                                last_move.player_side, board_cell_to->coord };
         break;
     case QUEEN:
         delete board_cell_to->piece;
-        board[last_move.to.x][last_move.to.y].piece = new Queen{ last_move.promoted_from,
+        board_cell_to->piece = new Queen{ last_move.promoted_from,
                                                                 last_move.player_side, board_cell_to->coord };
         break;
     default:
@@ -368,7 +353,9 @@ void BoardStructure::pop_move(bool pop_past_possible_moves)
     // piece is taken off the board cell it moved to during the last move
     if (last_move.piece_taken != nullptr)
     {
-        board_cell_to->piece = last_move.piece_taken;
+        board_cell_to->piece = nullptr;
+        Coord piece_taken_coord = last_move.piece_taken->coord;
+        board[piece_taken_coord.x][piece_taken_coord.y].piece = last_move.piece_taken;
     }
     else
     {
@@ -568,5 +555,10 @@ void BoardStructure::find_moves(bool check_for_pin)
             game_state = DRAW;
         }
         --move_number;
+    }
+
+    // (added, needs adding to pseudocode and updating dev screenshots)
+    if (check_for_pin) {
+        past_possible_moves.push_back(possible_moves);
     }
 }

@@ -13,30 +13,76 @@ Window {
     property int matchReviewCurrentBlunderIndex: 0
     property var matchBlunders: []
 
+    // updated the board GUI to show a new blunder move, is called
+    // whenever the "Next" or "Back" buttons are pressed to navigate
+    // through the blunders they made during the match
     function updateGUIBoardBlunder() {
-        if (matchBlunders.length > 0 && matchBlunders[matchReviewCurrentBlunderIndex]) {
-            var currentBlunder = matchBlunders[matchReviewCurrentBlunderIndex];
-            var updated1dGUIChessBoard = currentBlunder["boardBeforeBlunder"];
+        if (matchBlunders.length > 0
+                && matchBlunders[matchReviewCurrentBlunderIndex]) {
+            var currentBlunder = matchBlunders[matchReviewCurrentBlunderIndex]
+            var updated1dGUIChessBoard = currentBlunder["boardBeforeBlunder"]
 
-            // converts recieved 1d board into a 2d board so it can be displayed by the GUI
-            var updatedGUIChessBoard = []
+            // converts received 1d board into a 2d board so it can be displayed by the GUI
+            var updatedGUIChessBoard = [];
             for (var y = 0; y < 8; y++) {
-                updatedGUIChessBoard.push(updated1dGUIChessBoard.slice(y * 8, (y + 1) * 8))
+                updatedGUIChessBoard.push(
+                            updated1dGUIChessBoard.slice(y * 8, (y + 1) * 8) )
             }
             guiChessBoard.guiChessBoardOutputGrid = updatedGUIChessBoard
 
-            blunderSquare.x = currentBlunder["blunder_to_x"];
-            blunderSquare.y = currentBlunder["blunder_to_y"];
 
-            bestMoveFrom.x = currentBlunder["best_from_x"];
-            bestMoveFrom.y = currentBlunder["best_from_y"];
-            bestMoveTo.x = currentBlunder["best_to_x"];
-            bestMoveTo.y = currentBlunder["best_to_y"];
+            var blunderFromSquareIndex = currentBlunder["blunder_from_x"] +
+                                         currentBlunder["blunder_from_y"] * 8
+            var blunderToSquareIndex = currentBlunder["blunder_to_x"] +
+                                       currentBlunder["blunder_to_y"] * 8
+
+            // Set the square colors based on the blunder and best move
+            guiChessBoard.guiChessBoardOutputGrid.forEach(function(row, y) {
+                row.forEach(function(cell, x) {
+                    var index = x + y * 8;
+
+                    // Reset the background color of all squares
+                    guiChessBoard.guiChessBoardOutputGrid[y][x] = {
+                        color: (index + Math.floor(index / 8)) % 2 === 0 ? "#EEEED2" : "#769656",
+                        text: cell
+                    };
+
+                    // highlights the blunder's starting square in light grey
+                    if (index === blunderFromSquareIndex) {
+                        guiChessBoard.guiChessBoardOutputGrid[y][x].color = "#D3D3D3"
+                    }
+
+                    // Highlight the blunder's end square in red
+                    if (index === blunderToSquareIndex) {
+                        guiChessBoard.guiChessBoardOutputGrid[y][x].color = "#FF0000"
+                    }
+
+                    // Highlight the best move's squares in green
+                    var bestMoveFromIndex = currentBlunder["best_from_x"] +
+                                            currentBlunder["best_from_y"] * 8
+                    var bestMoveToIndex = currentBlunder["best_to_x"] +
+                                          currentBlunder["best_to_y"] * 8
+
+                    if (index === bestMoveFromIndex || index === bestMoveToIndex) {
+                        guiChessBoard.guiChessBoardOutputGrid[y][x].color = "#00FF00"
+                    }
+                })
+            })
+
+            blunderSquare.x = currentBlunder["blunder_to_x"]
+            blunderSquare.y = currentBlunder["blunder_to_y"]
+
+            bestMoveFrom.x = currentBlunder["best_from_x"]
+            bestMoveFrom.y = currentBlunder["best_from_y"]
+            bestMoveTo.x = currentBlunder["best_to_x"]
+            bestMoveTo.y = currentBlunder["best_to_y"]
         }
     }
 
+    // updates the board gui as soon as the screen has finished
+    // loading in order to show the first blunder made by the user
     Component.onCompleted: {
-        updateGUIBoardBlunder();
+        updateGUIBoardBlunder()
     }
 
     RowLayout {
@@ -112,10 +158,12 @@ Window {
                 Button {
                     width: 70
                     height: 70
-                    text: guiChessBoard.guiChessBoardOutputGrid[Math.floor(index / 8)][index % 8]
+                    text: guiChessBoard.guiChessBoardOutputGrid[
+                              Math.floor(index / 8)][index % 8]
                     font.pixelSize: 58
                     background: Rectangle {
-                        color: (index + Math.floor(index / 8)) % 2 === 0 ? "#EEEED2" : "#769656"
+                        color: (index + Math.floor(index / 8)) % 2
+                               === 0 ? "#EEEED2" : "#769656"
                         border.color: "#2A2623"
                         border.width: 0.5
                     }
@@ -148,7 +196,7 @@ Window {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
                     radius: 8
-                    anchors.bottomMargin: 3 // to adjust for border on bottom
+                    anchors.bottomMargin: 3
                 }
             }
         }

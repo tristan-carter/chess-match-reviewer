@@ -17,7 +17,6 @@ public:
 
     bool operator==(const Move& rhs) const {
         return from == rhs.from && to == rhs.to
-            && is_enpassant == rhs.is_enpassant
             && promotion_to == rhs.promotion_to;   // has been added after end of sprint 1 testing
     }
 };
