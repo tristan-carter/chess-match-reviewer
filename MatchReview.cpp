@@ -8,7 +8,10 @@
 
 MatchReview::MatchReview()
 {
-    // Step 1 - initiates board and
+    // Step 1 - initiates the match board BoardStructure instance
+    // which will be used to enter the match and then to review
+    // the match alongside declaring the match_moves attribute
+    // to an empty vector.
     match_board = BoardStructure{};
     match_moves = {};
 }
@@ -62,9 +65,9 @@ QVariantList MatchReview::convert_board_to_QML_board() {
     return boardGUI_variant_list;
 }
 
-QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, short int x_from, short int y_from, PieceType promoting_to)
+QVariantList MatchReview::enter_move_from_match(short int x_to,
+    short int y_to, short int x_from, short int y_from, PieceType promoting_to)
 {
-    //
     Move move_entered{ Coord{x_from, y_from}, Coord{x_to, y_to} };
     if (promoting_to != NOPIECE) {
         move_entered.promotion_to = promoting_to;
@@ -72,6 +75,12 @@ QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, 
 
     bool is_entered_move_valid = match_board.push_move(move_entered);
 
+    // validates the move the user attempted to make in the board GUI is
+    // legal, if it isn't then the board will remain unchanges and an
+    // unchanged board gui will be returned from this method and shown
+    // to the user, if it is legal then the move is pushed on the board,
+    // the move is added to the vector of match moves and the board gui
+    // is updated to represnt this change
     if (is_entered_move_valid) {
         match_moves.push_back(move_entered);
     }
@@ -83,14 +92,24 @@ QVariantList MatchReview::enter_move_from_match(short int x_to, short int y_to, 
 
 QVariantList MatchReview::find_blunders()
 {
+    // Step 1 – validates that the number of match moves is greater than 0
+    // and if it isn’t then an empty QVariantList (a list type which can
+    // be understood by the frontend QML code) is returned to the frontend
+    // which will in turn lead to the user receiving a pop up saying no
+    // blunders could be found in their match.
     if (match_moves.size() == 0) {
         return QVariantList();
     }
-    // undoes all moves made on board during entering of match
+    // Step 2 – undoes all the moves made on the match_board during the
+    // entering of the match to be reviewed into the reviewer.
     for (short int i = 0; i < match_moves.size(); i++) {
         match_board.pop_move();
     }
 
+    // Step 3 – iterates through each move made during the match and for each
+    // move which is the user’s turn, evaluates all the available moves, finding
+    // the best alternative move, its evaluation score and the evaluation score
+    // of the user’s move.
     QVariantList match_blunders = {};
     for (int move_number = 0; move_number < match_moves.size(); move_number++)
     {
@@ -118,16 +137,12 @@ QVariantList MatchReview::find_blunders()
                 match_board.pop_move();
             }
 
-            // determines whether user's move was a blunder based on whether the move was 2/3 of a bishop's
-            // worth worse than the best available move
+            // Step 4 – determines whether the user’s move was a blunder based on
+            // whether the move was 200 points (2 pawns) worth worse than the best
+            // available move and adds this to the list of match blunders if it is.
             if (best_move_eval - user_move_eval > 200) {
-                // Stores 4 pieces of information needed for the match review:
-                // 1. the board just before the blunder is made as a QVariantList
-                // 2. the coordinate of the square the piece moves to in the blunder
-                // 3. the coordinate of the square the piece should have moved from and to for the best move
-                // 4. a score from 1-100 as to how severe the blunder was
 
-                QVariantMap blunder;
+                QVariantMap blunder; // a dictionary type which the frontend QML code can understand
                 blunder["blunder_from_x"] = match_moves[move_number].from.x;
                 blunder["blunder_from_y"] = 7 - match_moves[move_number].from.y;
                 blunder["blunder_to_x"] = match_moves[move_number].to.x;
@@ -153,10 +168,8 @@ QVariantList MatchReview::find_blunders()
                 match_blunders.append(blunder);
             }
         }
-        bool is_legal = match_board.push_move(match_moves[move_number]);
-        if (is_legal == false) {
-            std::cout << "ERROR - INVALID MOVE" << std::endl;
-        }
+
+        match_board.push_move(match_moves[move_number]);
     }
     return match_blunders;
 }
@@ -188,10 +201,7 @@ short int MatchReview::negamax_alpha_beta(BoardStructure& board,
         // Step 5 - pushes the currently iterated move on the board so that the
         // resulting board position can be analysed to determine how good of a
         // move the move pushed was.
-        bool is_legal = board.push_move(move);
-        if (is_legal == false) {
-            std::cout << "ERROR - INVALID MOVE" << std::endl;
-        }
+        board.push_move(move);
 
         // Step 6 – declares score in the scope necessary to be accessed in the
         // later steps. Then checks whether the match has ended after making an
@@ -306,10 +316,7 @@ short int MatchReview::quiescence(BoardStructure& board,
         {
             // Step 8 -pushes the currently iterated move on the board so that the
             // resulting board position can be analysed.
-            bool is_legal = board.push_move(move);
-            if (is_legal == false) {
-                std::cout << "ERROR - INVALID MOVE" << std::endl;
-            }
+            board.push_move(move);
 
             // Step 9 – declares score in the scope necessary to be accessed in the
             // later steps. Then checks whether the match has ended after making an

@@ -27,7 +27,8 @@ Window {
     property int bestMoveToX: 0
     property int bestMoveToY: 0
 
-    // enables/d
+    // enables the next and back buttons if there is another blunder to click
+    // next to or to click back to
     property bool next_blunder_available: false
     property bool previous_blunder_available: false
 
@@ -73,20 +74,20 @@ Window {
         spacing: 20
         Layout.alignment: Qt.AlignVCenter
 
-        // Blunder Next/Back Nav Section
+        // Blunder Next/Back Navigation Section
         Rectangle {
             Layout.preferredWidth: 185
-            Layout.preferredHeight: 180
+            Layout.preferredHeight: 195
             color: "#E0AFA0"
             radius: 8
             ColumnLayout {
                 anchors.centerIn: parent
-                spacing: 10
+                spacing: 8
                 Layout.fillWidth : true
                 Layout.fillHeight : true
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: "Worst moves you played"
+                    text: "Blunders you played"
                     font.pixelSize: 16
                     color: "#1A1A1A"
                 }
@@ -148,20 +149,30 @@ Window {
                     font.pixelSize: 58
                     background: Rectangle {
                         color: {
-                            if (row === blunderFromY && col === blunderFromX)
-                                return "#FF0000"; // red for blunder start board square
-                            else if (row === blunderToY && col === blunderToX)
-                                return "#FF0000"; // red for blunder end board square
-                            else if (row === bestMoveFromY && col === bestMoveFromX) {
-                                return (blunderFromX === bestMoveFromX && blunderFromY === bestMoveFromY)
-                                       ? "#FF0000" // red if same as blunder start board square
-                                       : "#00FF00"; // bright green for best move start board square
+                            if (row === blunderFromY
+                                    && col === blunderFromX)
+                                // red for blunder start board square
+                                return "#FF0000";
+                            else if (row === blunderToY
+                                     && col === blunderToX)
+                                // red for blunder end board square
+                                return "#FF0000";
+                            else if (row === bestMoveFromY
+                                     && col === bestMoveFromX) {
+                                return (blunderFromX === bestMoveFromX
+                                        && blunderFromY === bestMoveFromY)
+                                       ? "#FF0000" // red if same as blunder
+                                         // start board square
+                                       : "#00FF00"; // bright green for best
+                                         // move start board square
                             }
                             else if (row === bestMoveToY && col === bestMoveToX)
-                                return "#00FF00"; // bright green for best move end board square
+                                return "#00FF00"; // bright green for best move
+                                 // end board square
                             else
-                                return ((row + col) % 2 === 0) ? "#EEEED2" : "#769656"; // normal board square colours
-                                // alternating between dark green and cream as is standard for chess boards
+                                // normal board square colours alternating between dark
+                                // green and cream as is standard for chess boards
+                                return ((row + col) % 2 === 0) ? "#EEEED2" : "#769656";
                         }
                         border.color: "#2A2623"
                         border.width: 0.5
