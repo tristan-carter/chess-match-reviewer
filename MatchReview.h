@@ -11,21 +11,13 @@ class MatchReview : public QObject
 {
     Q_OBJECT
 public:
-    // MatchReview class constructor
     MatchReview();
 
-    // enter_move_from_match is called whenever the user enters a move from the match they would like to review,
-    // this method pushes that move onto the match_moves attribute of this class and then returns the updated
-    // board after that move has been made so the board GUI can be updated correctly.
     Q_INVOKABLE QVariantList enter_move_from_match(short int x_to,
         short int y_to, short int x_from, short int y_from, PieceType promoting_to);
 
-    // enter_user_side is called when the user clicks which side they played in the match they will enter to be reviewed
     Q_INVOKABLE void enter_user_side(PlayerSide entered_user_side);
 
-    // finds the worst moves made by the user then returns this to the frontend QML code as board positions to iterate
-    // through which also come with info about which square to move to was the best move and which square the piece
-    // just moved from
     Q_INVOKABLE QVariantList find_blunders();
 
     BoardStructure match_board;
