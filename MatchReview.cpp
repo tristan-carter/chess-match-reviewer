@@ -91,8 +91,8 @@ QVariantList MatchReview::find_blunders()
     }
 
     // evaluates the available moves the user had to choose from during 
-    // each of their turns to determine the best available move and compares that
-    // with the moves they chose to play to identify blunders
+    // each of their turns to determine the best available moves and compares those
+    // with the moves the user chose to play to decide if the move they made was good or not
     QVariantList match_blunders = {};
     for (int move_number = 0; move_number < match_moves.size(); move_number++)
     {
