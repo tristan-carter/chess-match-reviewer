@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.16)
-
 project(chess-match-reviewer VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,6 +9,17 @@ qt_standard_project_setup(REQUIRES 6.5)
 
 qt_add_executable(appchess-match-reviewer
     main.cpp
+    Bishop.cpp
+    BoardStructure.cpp
+    King.cpp
+    Knight.cpp
+    MatchReview.cpp
+    Pawn.cpp
+    Piece.cpp
+    PieceSquareTables.cpp
+    Queen.cpp
+    Rook.cpp
+    resources.qrc
 )
 
 qt_add_qml_module(appchess-match-reviewer
@@ -18,21 +28,6 @@ qt_add_qml_module(appchess-match-reviewer
     QML_FILES
         EnterMatchToReviewScreen.qml
         MatchReviewScreen.qml
-    SOURCES
-        BoardStructure.h BoardStructure.cpp
-        BoardCell.h
-        Piece.h Piece.cpp
-        Move.h
-        PastMove.h
-        Coord.h
-        PieceSquareTables.cpp
-        Pawn.h Pawn.cpp
-        Bishop.h Bishop.cpp
-        King.h King.cpp
-        Knight.h Knight.cpp
-        Queen.h Queen.cpp
-        Rook.h Rook.cpp
-        MatchReview.h MatchReview.cpp
 )
 
 set_target_properties(appchess-match-reviewer PROPERTIES

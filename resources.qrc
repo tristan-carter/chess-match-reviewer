@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>EnterMatchToReviewScreen.qml</file>
+        <file>MatchReviewScreen.qml</file>
+    </qresource>
+</RCC>

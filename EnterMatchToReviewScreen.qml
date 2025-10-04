@@ -220,7 +220,7 @@ Window {
 
         // Start Review Section
         Rectangle {
-            Layout.preferredWidth: 185
+            Layout.preferredWidth: 220
             Layout.preferredHeight: 103
             color: "#E0AFA0"
             radius: 8
@@ -239,7 +239,7 @@ Window {
                     Layout.alignment: Qt.AlignHCenter
                     text: "Start Review"
                     font.bold: true
-                    Layout.preferredWidth: 170
+                    Layout.preferredWidth: 190
                     Layout.preferredHeight: 55
                     font.pixelSize: 25
                     background: Rectangle {
@@ -249,27 +249,27 @@ Window {
                     onClicked: {
                         var matchBlunders = match_review.find_blunders()
 
-                        // checks if any blunders were made
                         if (matchBlunders.length > 0) {
-                            // takes the user to the match review screen to review
-                            // the blunders they made
-                            var matchReviewScreen = Qt
-                            .createComponent("MatchReviewScreen.qml").createObject(parent, {
-                                matchBlunders: matchBlunders
-                            });
+                            var component = Qt.createComponent("qrc:/MatchReviewScreen.qml")
+                            if (component.status === Component.Ready) {
+                                var matchReviewScreen = component.createObject(parent, {
+                                    matchBlunders: matchBlunders
+                                })
 
-                            // error checking in case the screen doesn't load
-                            if (!matchReviewScreen) {
-                                console.error("ERROR - matchReviewScreen failed to create");
-                                return;
+                                if (!matchReviewScreen) {
+                                    console.error("ERROR - matchReviewScreen failed to create")
+                                    return
+                                }
+
+                                matchReviewScreen.show()
+                            } else {
+                                console.error("ERROR - MatchReviewScreen component failed to load:", component.errorString())
                             }
-
-                            matchReviewScreen.show();
                         } else {
-                            // tells the user they made no blunders
                             noBlundersInMatch.open()
                         }
                     }
+
                 }
             }
         }
