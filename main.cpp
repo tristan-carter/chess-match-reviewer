@@ -1,12 +1,13 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-
+#include <QQuickStyle>
 #include "MatchReview.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Basic");
 
     QQmlApplicationEngine engine;
 
@@ -19,7 +20,7 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.loadFromModule("ALevelNEAChessReviewer", "EnterMatchToReviewScreen");
+    engine.loadFromModule("com.tristancarter.chessmatchreviewer", "EnterMatchToReviewScreen");
 
     return app.exec();
 }
