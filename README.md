@@ -2,11 +2,11 @@
 
 A comprehensive application designed to help chess players analyse past matches and identify strategic errors.  
 
-Built entirely from first principles while revising for A Levels, this project uses **only the Qt framework** for the GUI (no AI libraries, tutorials, or external chess engines) to gain a fundamental understanding of building large, complex systems in C++.
+Built entirely from first principles while revising for A Levels, this project uses only the Qt framework for the GUI (no AI libraries, tutorials, or external chess engines) to gain a fundamental understanding of building large, complex systems in C++.
 
 ---
 
-## ✨ Features
+## Features
 - **Match Review Mode**  
   Import and replay past matches move by move.
 - **Blunder Detection**  
@@ -22,7 +22,7 @@ Built entirely from first principles while revising for A Levels, this project u
 
 ---
 
-## 🛠️ Technical Design
+## Technical Design
 
 ### Object-Oriented Architecture
 - Custom `BoardStructure` to represent the game state.
