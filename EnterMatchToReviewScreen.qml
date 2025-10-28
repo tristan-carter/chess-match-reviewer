@@ -250,7 +250,8 @@ Window {
                         var matchBlunders = match_review.find_blunders()
 
                         if (matchBlunders.length > 0) {
-                            var component = Qt.createComponent("qrc:/MatchReviewScreen.qml")
+                            var component = Qt.createComponent("MatchReviewScreen.qml")
+
                             if (component.status === Component.Ready) {
                                 var matchReviewScreen = component.createObject(parent, {
                                     matchBlunders: matchBlunders

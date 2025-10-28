@@ -19,7 +19,6 @@ qt_add_executable(appchess-match-reviewer
     PieceSquareTables.cpp
     Queen.cpp
     Rook.cpp
-    resources.qrc
 )
 
 qt_add_qml_module(appchess-match-reviewer
