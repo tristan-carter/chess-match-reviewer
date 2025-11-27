@@ -2,15 +2,15 @@
 
 A comprehensive application designed to help chess players analyse past matches and identify strategic errors.  
 
-Built entirely from first principles while revising for A Levels, this project uses only the Qt framework for the GUI (no AI libraries, tutorials, or external chess engines) to gain a fundamental understanding of building large, complex systems in C++.
+Built entirely from first principles while revising for A Levels, this project uses only the Qt framework for the GUI (no external libraries, tutorials, or external chess engines) to learn more and be able to try stuff out on my own.
 
 ---
 
 ## Features
 - **Match Review Mode**  
-  Import and replay past matches move by move.
+  Replay a match in the GUI to import it.
 - **Blunder Detection**  
-  Identifies moves at least *200 centipawns* worse than the best available alternative, with severity scoring.
+  Identifies moves at least 200 centipawns worse than the best available alternative, with severity scoring.
 - **Custom Chess Engine**  
   - Minimax tree search  
   - Alpha-beta pruning  
@@ -30,6 +30,6 @@ Built entirely from first principles while revising for A Levels, this project u
 - Polymorphism used so each piece implements its own move generation while being handled uniformly.
 
 ### Search & Evaluation
-- **Negamax with alpha-beta pruning**: efficiently searches the game tree to find optimal moves.  
-- **Quiescence search**: avoids horizon effect by extending captures.  
-- **Static evaluation**: material weights + piece-square tables for positional understanding.  
+- Negamax with alpha-beta pruning: efficiently searches the game tree to find optimal moves.  
+- Quiescence search: avoids horizon effect by extending captures.  
+- Static evaluation: material weights + piece-square tables for positional understanding.  
