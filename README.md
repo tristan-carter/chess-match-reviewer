@@ -11,10 +11,6 @@ Developed with no external libraries (other than Qt for the GUI) so I could lear
 - Chess Engine
   - Minimax tree search  
   - Alpha-beta pruning  
-  - Quiescence search for stable leaf evaluation  
-- Interactive GUI (Qt)  
-  - Unicode piece display  
-  - Responsive move entry and review  
-  - Blunder highlighting  
+  - Quiescence search to counter horizon effect
 
 <img width="1253" height="860" alt="image" src="https://github.com/user-attachments/assets/c2286c62-1682-4f5f-82cf-411e30759483" />
