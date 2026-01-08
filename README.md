@@ -1,6 +1,6 @@
 # Chess Match Reviewer
 
-Developed with no external libraries (other than Qt for the GUI) so I could learn from doing things myself, like from the many iterations I had to make while initially designing and then developing my OOP architecture.
+Developed with no external libraries (other than Qt for the GUI) so I could experiment and learn on my own. (Note: I did this project in late 2024/early 2025 to play around with OOP and simple tree search algorithms, prioritising architectural learning rather than performance oriented programming like I do now).
 
 ## General Design
 - Blunder Detection and severity scoring
@@ -9,7 +9,7 @@ Developed with no external libraries (other than Qt for the GUI) so I could lear
   - Base `Piece` class with subclasses (`Pawn`, `Knight`, `Bishop`, `Rook`, `Queen`, `King`)
   - Polymorphism used so each piece implements its own move generation while being handled uniformly
 - Chess Engine
-  - Minimax tree search  
+  - Negamax tree search  
   - Alpha-beta pruning  
   - Quiescence search to counter horizon effect
 
